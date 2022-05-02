@@ -1,6 +1,8 @@
 <div style="color: forestgreen">
     <h1>Welcome to my blog with Twig</h1>
+    <h2>Liste des utilisateurs</h2>
     {% for user in users %}
-        <h1>Blog de {{ user.name }}</h1>
+        <h1>{{ user.name }}</h1>
     {% endfor %}
+    <a href="./createuser">inscrivez vous</a>
 </div>
