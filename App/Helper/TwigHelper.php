@@ -3,9 +3,11 @@
 namespace App\Helper;
 
 use Twig;
+
 class TwigHelper
 {
-    static function loadTwig(){
+    public function loadTwig(): Twig\Environment
+    {
         $loader = new \Twig\Loader\FilesystemLoader('./templates');
 
         return new  Twig\Environment($loader);

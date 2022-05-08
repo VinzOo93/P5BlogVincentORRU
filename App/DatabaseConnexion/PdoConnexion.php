@@ -1,15 +1,19 @@
 <?php
+
 namespace App\DataBaseConnexion;
 
 use PDO;
 
 class PdoConnexion
 {
-    static function ConnectToDB(){
-      return  new PDO(
-            'mysql:host=127.0.0.1:3306;dbname=Blog;charset=utf8',
-            'root',
-            'root'
+    public function connectToDB()
+    {
+        $ini = parse_ini_file("Config/config.ini", true,INI_SCANNER_RAW);
+
+        return new PDO(
+            $ini["database"]["dsn"],
+            $ini["database"]["db_user"],
+            $ini["database"]["db_password"]
         );
     }
 }

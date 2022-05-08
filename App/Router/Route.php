@@ -2,39 +2,21 @@
 
 namespace App\Router;
 
+use App\Controller\HomeController;
+use App\Controller\CrudUserController;
+
 class Route
 {
-    private $path;
-    private $callable;
-    private $matches;
 
-    /**
-     * @param $path
-     * @param $callable
-     */
-    public function __construct($path, $callable)
+    public function getRoutes()
     {
-        $this->path = trim($path, '/') ;
-        $this->callable = $callable;
+        return [
+            'home' => ['', HomeController::class, 'showHome', 'GET'],
+            'register' => ['register', CrudUserController::class, 'showForm', 'GET'],
+            'registerUser' => ['registerUser', CrudUserController::class, 'addUser', 'POST'],
+            'user' => ['user/{id}', CrudUserController::class, 'showUser', 'GET']
+        ];
     }
-
-    public function match($url){
-        $url = trim($url, '/');
-        $path = preg_replace('#:([\w]+)#', '([^/]+)', $this->path);
-        $regex = "#^$path#i";
-        if (!preg_match($regex,$url,$matches)) {
-            return false;
-        }
-
-        array_shift($matches);
-        $this->matches = $matches;
-        return  true;
-    }
-
-    public  function call(){
-        return call_user_func_array($this->callable, $this->matches);
-    }
-
-
 
 }
+
