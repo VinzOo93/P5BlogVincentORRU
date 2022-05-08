@@ -2,21 +2,19 @@
 
 namespace App\Controller;
 
-use App\DataBaseConnexion\PdoConnexion;
 use App\Helper\TwigHelper;
+use App\Manager\UserManager;
 
 class HomeController
 {
 
-    static function showHome(){
-        $db = PdoConnexion::ConnectToDB();
-        $twig = TwigHelper::loadTwig();
+    public static function showHome()
+    {
+        $twig = new TwigHelper();
+        $userManager = new UserManager();
+        $users = $userManager->selectAllUsers();
 
-        $userStatement = $db->prepare("SELECT name FROM user");
-        $userStatement->execute();
-        $users = $userStatement->fetchAll();
-
-        return $twig->render('index.html.twig', ['users' => $users]);
+        $twig->loadTwig()->display('index.html.twig', ['users' => $users]);
     }
 
 }
