@@ -1,0 +1,13 @@
+<div style="color: forestgreen">
+    <h1>Welcome to my blog with Twig</h1>
+    <h2>Liste des utilisateurs</h2>
+    {% for user in users %}
+        <ul>
+            <li>
+                <a href="user/{{user.name}}" id="user-{{user.name}}">{{ user.name }}</a>
+            </li>
+        </ul>
+    {% endfor %}
+    <br>
+    <h2><a href="./register">inscrivez vous</a></h2>
+</div>
