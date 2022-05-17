@@ -3,7 +3,7 @@
 namespace App\Router;
 
 use App\Controller\HomeController;
-use App\Controller\CrudUserController;
+use App\Controller\UserController;
 
 class Route
 {
@@ -12,9 +12,11 @@ class Route
     {
         return [
             'home' => ['', HomeController::class, 'showHome', 'GET'],
-            'register' => ['register', CrudUserController::class, 'showForm', 'GET'],
-            'registerUser' => ['registerUser', CrudUserController::class, 'addUser', 'POST'],
-            'user' => ['user/{id}', CrudUserController::class, 'showUser', 'GET']
+            'register' => ['register', UserController::class, 'showForm', 'GET'],
+            'registerUser' => ['registerUser', UserController::class, 'addUser', 'POST'],
+            'user' => ['user/{id}', UserController::class, 'showUser', 'GET'],
+            'updateUser' => ['user/updateUser/{id}', UserController::class, 'updateUser', 'POST'],
+            'deleteUser' => ['user/deleteUser/{id}', UserController::class, 'deleteUser', 'GET']
         ];
     }
 

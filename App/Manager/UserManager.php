@@ -2,41 +2,40 @@
 
 namespace App\Manager;
 
-use App\DataBaseConnexion\PdoConnexion;
 
-
-class UserManager
+class UserManager extends QueryManager
 {
-    private $db;
-
-    public function __construct()
-    {
-        $this->db = new PdoConnexion();
-    }
+    private string $user = 'user';
+    private string $all = '*';
+    private string $id = 'id';
+    private string $name = 'name';
+    private string $firstName = 'firstName';
+    private string $email = 'email';
+    private string $password = 'password';
 
     public function selectAllUsers()
     {
-        $userStatement = $this->db->connectToDb()->prepare("SELECT * From user");
-        $userStatement->execute();
-
-        return $userStatement->fetchAll();
+        return $this->fetchAll($this->all, $this->user);
     }
 
     public function insertUser($name, $firstName, $email, $password)
     {
-        $sql = "INSERT INTO 
-                    user(name, firstName, email, password)
-                    VALUES( ?, ? , ?, ?)";
-        $stmt = $this->db->connectToDb()->prepare($sql);
-        $stmt->execute([$name, $firstName, $email, $password]);
-
+        $this->insert($this->user,[$this->name => $name, $this->firstName => $firstName, $this->email => $email, $this->password => $password]);
     }
 
     public function selectUser($id)
     {
-        $userStatement = $this->db->connectToDb()->prepare("SELECT * From user WHERE id = '".$id."'");
-        $userStatement->execute();
-
-        return $userStatement->fetchObject();
+        return $this->fetchOneById($this->all,$this->user, $id);
     }
+
+    public  function  amendUser($id, $name, $firstName, $email, $password)
+    {
+        $this->update($this->user,[$this->id => $id,$this->name => $name, $this->firstName => $firstName, $this->email => $email, $this->password => $password]);
+    }
+
+    public  function  deleteUser($id)
+    {
+        $this->delete($this->user,$id);
+    }
+
 }

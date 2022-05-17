@@ -36,7 +36,6 @@ class Router
                 throw new \Exception("pas de fonction trouvée");
             }
         }
-
     }
 
     public function post(array $paramList = [], array $data = [])
@@ -48,8 +47,10 @@ class Router
             $paramMethod = $paramList[2];
             $methodArr = get_class_methods($class);
             $data = $_POST;
+            $id = $this->param;
             if (in_array($paramMethod, $methodArr)) {
-                return call_user_func([$class, $paramMethod], $data);
+
+                return call_user_func([$class, $paramMethod], $data, $id);
             } else {
                 throw new \Exception("pas de fonction trouvée");
             }
@@ -84,10 +85,11 @@ class Router
             foreach ($routeArr as $route) {
                 $explodeRoute = explode('/', ($route));
 
-                if (count($explodeUrl) > 1 && count($explodeRoute) > 1) {
+                if (count($explodeUrl) > 1 && count($explodeRoute) > 1
+                    && array_slice($explodeUrl, 0, count($explodeUrl)-1) === array_slice($explodeRoute, 0, count($explodeRoute)-1)) {
                    $needle = $needle->get_string_between(implode('/',$explodeRoute), '{','}');
-                    if (array_search('{'.$needle.'}', $explodeRoute)) {
-                        $this->param = substr($this->url ,stripos($this->url, '/')+1);
+                   if (array_search('{'.$needle.'}', $explodeRoute)) {
+                        $this->param = filter_var($this->url, FILTER_SANITIZE_NUMBER_INT);
                         $route = array_replace($explodeRoute, $explodeUrl);
                         $route = implode("/", $route);
                     }

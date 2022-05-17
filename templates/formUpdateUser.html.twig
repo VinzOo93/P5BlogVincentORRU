@@ -1,6 +1,6 @@
-<h1>ajout d'un utilisateur</h1>
+<h1>mise à jour d'un utilisateur</h1>
 <div>
-    <form action="/registerUser" method="post">
+    <form action="/user/updateUser/{{ user.id }}" method="POST">
         <label for="name">name</label>
         <input type="text" name="name">
         <label for="firstName">firstName</label>
@@ -12,5 +12,4 @@
         <button type="submit">Envoyer</button>
     </form>
 </div>
-
 <a href="/">retour home</a>
