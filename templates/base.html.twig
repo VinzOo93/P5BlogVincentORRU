@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="FR" class="fontawesome-i2svg-active fontawesome-i2svg-complete">
+<head>
+    <meta charset="utf-8">
+    <title>Hello Vincent!</title>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <script src="https://kit.fontawesome.com/2828f7885a.js" integrity="sha384-WAsFbnLEQcpCk8lM1UTWesAf5rGTCvb2Y+8LvyjAAcxK1c3s5c0L+SYOgxvc6PWG" crossorigin="anonymous"></script>
+    <script src="https://kit-pro.fontawesome.com/releases/latest/js/pro.min.js" data-auto-a11y="true" data-auto-fetch-svg="" data-fetch-svg-from="https://kit-pro.fontawesome.com/releases/latest/svgs" defer=""></script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body data-aos-easing="ease-out" data-aos-duration="800" data-aos-delay="0" class="preloader-site" cz-shortcut-listen="true">
+<div class="preloader-wrapper" style="display: none;">
+    <div class="preloader">
+        <img src="img/preloader.gif" alt="">
+    </div>
+</div>
+    <button id="toTop" title="Go to top" style="display: none;" type="button" onclick="toTheTop()">
+        <svg class="svg-inline--fa fa-angle-up fa-w-10" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-up" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path></svg><!-- <i class="fas fa-angle-up"></i> Font Awesome fontawesome.com -->
+    </button>
+{% include 'header.html.twig' %}
+
+
+<section class="section">
+    <div class="container">
+        {% block content %}{% endblock%}
+    </div>
+</section>
+
+{% include 'footer.html.twig' %}
+<script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+<link href="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="../src/js/main.js"></script>
+<script>
+    AOS.init({
+        easing: "ease-out",
+        duration: 800,
+    });
+
+</script>
+</body>
+</html>
