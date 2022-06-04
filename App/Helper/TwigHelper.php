@@ -8,7 +8,7 @@ class TwigHelper
 {
     public function loadTwig(): Twig\Environment
     {
-        $loader = new \Twig\Loader\FilesystemLoader('./templates');
+        $loader = new \Twig\Loader\FilesystemLoader('../templates');
 
         return new  Twig\Environment($loader);
     }

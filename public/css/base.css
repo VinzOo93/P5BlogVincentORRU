@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Lato|Poppins|Kaushan+Script");
 
 .background-img {
-    background-image: linear-gradient(rgba(0, 0, 0, -5), rgba(0, 0, 0, -5)), url("../images/header.jpg");
+    background-image: linear-gradient(rgba(0, 0, 0, -5), rgba(0, 0, 0, -5)), url("../images/banner.jpg");
     backdrop-filter: blur(1px)!important;
     background-position: center center !important;
     background-size: cover!important;
