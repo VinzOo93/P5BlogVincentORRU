@@ -11,10 +11,10 @@ use Exception;
 class UserController
 {
 
-    public static function showForm()
+    public static function showFormAddUser()
     {
         $twig = new TwigHelper();
-        $twig->loadTwig()->display('formAddUser.html.twig');
+        $twig->loadTwig()->display('user/formAddUser.html.twig');
     }
 
     public static function addUser(array $data = [])
@@ -29,7 +29,7 @@ class UserController
             $userManager = new UserManager();
             $userManager->insertUser($name, $firstName, $email, $password);
 
-            $request->redirectToRoute('home');
+            $request->redirectToRoute('blog');
             echo 'Le nouvel utilisateur a été ajouté <br>';
         } catch (Exception $e) {
             echo 'erreur lors de l\'ajout' . $e;

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/form.css">
+{% endblock %}
+{% block banner %}
+    {% include "/blog/headerBlog.html.twig" %}
+{% endblock %}
+{% block content %}
+    <h1 class="title has-text-centered">Connexion</h1>
+    <section class="hero">
+        <div class="hero-body">
+            <form class="container"  action="/registerUser" method="post">
+                <label class="label" for="email">email</label>
+                <input class="input is-normal" type="text" name="email">
+                <label class="label"for="password">password</label>
+                <input  class="input is-normal" type="text" name="password">
+                <button class="button hero-buttons" type="submit">Me connecter</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

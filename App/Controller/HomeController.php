@@ -11,10 +11,8 @@ class HomeController
     public static function showHome()
     {
         $twig = new TwigHelper();
-        $userManager = new UserManager();
-        $users = $userManager->selectAllUsers();
 
-        $twig->loadTwig()->display('index.html.twig', ['users' => $users]);
+        $twig->loadTwig()->display('index.html.twig');
     }
 
 }

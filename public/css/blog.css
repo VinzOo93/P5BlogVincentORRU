@@ -1,0 +1,9 @@
+.text-banner-blog {
+    position: relative;
+    bottom: 15vh;
+    margin-bottom: 20%;
+}
+
+.blog-title {
+    font-size: 4rem!important;
+}

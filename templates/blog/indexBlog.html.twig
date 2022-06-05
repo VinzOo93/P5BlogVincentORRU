@@ -1,0 +1,57 @@
+{% extends "base.html.twig" %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/blog.css">
+{% endblock %}
+{% block banner %}
+{% include "blog/headerBlog.html.twig" %}
+{% endblock %}
+{% block content %}
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns">
+                    <div class="column is-8 is-offset-2">
+                        <figure class="image is-16by9">
+                            <img src="../images/img-3.jpeg" alt="">
+                            <div class="container has-text-centered text-banner-blog">
+                                <h1 class="subtitle">Welcome to</h1>
+                                <h2 class="title blog-title">My Blog</h2>
+                                <h1 class="subtitle profession">My lifestyle</h1>
+                            </div>
+                        </figure>
+                    </div>
+                </div>
+
+                <section class="section article" id="articles">
+                    <div class="columns">
+                        <div class="column is-8 is-offset-2">
+                            <div class="content is-medium">
+                                <h2 class="subtitle is-4">December 25, 2022</h2>
+                                <h1 class="title">Getting Started</h1>
+                                <p>This is a starter template for creating a beautiful, customizable blog with minimal
+                                    effort. You’ll only have to change a few settings and you’re ready to go. As with all Jigsaw sites,
+                                    configuration settings can be found in config</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="is-divider"></div>
+
+                <section class="section article">
+                    <div class="columns">
+                        <div class="column is-8 is-offset-2">
+                            <div class="content is-medium">
+                                <h2 class="subtitle is-4">December 25, 2022</h2>
+                                <h1 class="title">Getting Started</h1>
+                                <p>This is a starter template for creating a beautiful, customizable blog with minimal
+                                    effort. You’ll only have to change a few settings and you’re ready to go. As with all Jigsaw sites,
+                                    configuration settings can be found in config</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+{% endblock %}

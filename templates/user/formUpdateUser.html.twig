@@ -1,0 +1,15 @@
+<h1>mise à jour d'un utilisateur</h1>
+<div>
+    <form action="/user/updateUser/{{ user.id }}" method="POST">
+        <label for="name">name</label>
+        <input type="text" name="name">
+        <label for="firstName">firstName</label>
+        <input type="text" name="firstName">
+        <label for="email">email</label>
+        <input type="text" name="email">
+        <label for="password">password</label>
+        <input type="text" name="password">
+        <button type="submit">Envoyer</button>
+    </form>
+</div>
+<a href="/">retour home</a>
