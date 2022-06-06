@@ -1,0 +1,25 @@
+{% extends "/base.html.twig" %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/blog.css">
+{% endblock %}
+{% block banner %}
+    {% include "/blog/headerBlog.html.twig" %}
+{% endblock %}
+{% block content %}
+    <h1 class="title has-text-centered">Ajout d'un utilisateur</h1>
+    <section class="hero">
+        <div class="hero-body">
+            <form class="container"  action="/addArticle" method="post">
+                <label class="label" for="title">title</label>
+                <input class="input is-normal" type="text" name="title">
+                <label class="label" for="tag">tag</label>
+                <input class="input is-normal" type="text" name="tag">
+                <label class="label" for="image">image</label>
+                <input class=" is-normal" type="file" name="image">
+                <label class="label" for="content">content</label>
+                <textarea class="textarea" name="content" id="content" cols="30" rows="10"></textarea>
+                <button class="button hero-buttons" type="submit">Envoyer</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

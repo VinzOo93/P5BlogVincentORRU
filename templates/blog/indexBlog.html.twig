@@ -3,55 +3,181 @@
     <link rel="stylesheet" href="/css/blog.css">
 {% endblock %}
 {% block banner %}
-{% include "blog/headerBlog.html.twig" %}
+    {% include "blog/headerBlog.html.twig" %}
 {% endblock %}
 {% block content %}
-    <section class="hero">
-        <div class="hero-body">
-            <div class="container">
-                <div class="columns">
-                    <div class="column is-8 is-offset-2">
-                        <figure class="image is-16by9">
-                            <img src="../images/img-3.jpeg" alt="">
-                            <div class="container has-text-centered text-banner-blog">
-                                <h1 class="subtitle">Welcome to</h1>
-                                <h2 class="title blog-title">My Blog</h2>
-                                <h1 class="subtitle profession">My lifestyle</h1>
-                            </div>
-                        </figure>
+    <div class="columns body-columns">
+        <div class="column is-half is-offset-one-quarter">
+            <div class="card">
+                <div class="header">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://source.unsplash.com/random/96x96" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Vincent ORRU</p>
+                            <p class="subtitle is-6">article</p>
+                        </div>
                     </div>
                 </div>
-
-                <section class="section article" id="articles">
-                    <div class="columns">
-                        <div class="column is-8 is-offset-2">
-                            <div class="content is-medium">
-                                <h2 class="subtitle is-4">December 25, 2022</h2>
-                                <h1 class="title">Getting Started</h1>
-                                <p>This is a starter template for creating a beautiful, customizable blog with minimal
-                                    effort. You’ll only have to change a few settings and you’re ready to go. As with all Jigsaw sites,
-                                    configuration settings can be found in config</p>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://source.unsplash.com/random/1280x960" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item has-text-centered">
+                                <a href="">
+                                    <i class="material-icons">favorite_border</i>
+                                </a>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <a href="">
+                                        <i class="material-icons">chat_bubble_outline</i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
 
-                <div class="is-divider"></div>
+                    <div class="content">
+                        <p>
+                            <strong>32 Likes</strong>
+                        </p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                        <a>@bulmaio</a>.
+                        <a href="#">#css</a>
+                        <a href="#">#responsive</a>
+                        <br>
+                        <time datetime="2018-1-1">12:02 PM - 1 May 2018</time>
+                    </div>
+                    <form action="/article">
+                        <button class="button">
+                            <i class="material-icons">Voir Plus</i>
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-                <section class="section article">
-                    <div class="columns">
-                        <div class="column is-8 is-offset-2">
-                            <div class="content is-medium">
-                                <h2 class="subtitle is-4">December 25, 2022</h2>
-                                <h1 class="title">Getting Started</h1>
-                                <p>This is a starter template for creating a beautiful, customizable blog with minimal
-                                    effort. You’ll only have to change a few settings and you’re ready to go. As with all Jigsaw sites,
-                                    configuration settings can be found in config</p>
+
+            <div class="card">
+                <div class="header">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://source.unsplash.com/random/96x96" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Vincent ORRU</p>
+                            <p class="subtitle is-6">article</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://source.unsplash.com/random/1280x960" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item has-text-centered">
+                                <a href="">
+                                    <i class="material-icons">favorite_border</i>
+                                </a>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <a href="">
+                                        <i class="material-icons">chat_bubble_outline</i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+
+                    <div class="content">
+                        <p>
+                            <strong>32 Likes</strong>
+                        </p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                        <a>@bulmaio</a>.
+                        <a href="#">#css</a>
+                        <a href="#">#responsive</a>
+                        <br>
+                        <time datetime="2018-1-1">12:02 PM - 1 May 2018</time>
+                    </div>
+                    <form action="/article">
+                        <button class="button">
+                            <i class="material-icons">Voir Plus</i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="header">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://source.unsplash.com/random/96x96" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Vincent ORRU</p>
+                            <p class="subtitle is-6">article</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://source.unsplash.com/random/1280x960" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <div class="level-item has-text-centered">
+                                <a href="">
+                                    <i class="material-icons">favorite_border</i>
+                                </a>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <a href="">
+                                        <i class="material-icons">chat_bubble_outline</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <p>
+                            <strong>32 Likes</strong>
+                        </p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.
+                        <a>@bulmaio</a>.
+                        <a href="#">#css</a>
+                        <a href="#">#responsive</a>
+                        <br>
+                        <time datetime="2018-1-1">12:02 PM - 1 May 2018</time>
+                    </div>
+                    <form action="/article">
+                        <button class="button">
+                            <i class="material-icons">Voir Plus</i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
+    {% include 'blog/paginateArticles.html.twig' %}
 {% endblock %}
