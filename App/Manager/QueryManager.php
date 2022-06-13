@@ -26,9 +26,26 @@ abstract class QueryManager
         return $queryStatement->fetchAll();
     }
 
+    public function fetchAllWithLeftJoin($selector, $table, $table2, $fk, $pk){
+        $sql = "SELECT $selector FROM  $table LEFT JOIN $table2 ON $table.$fk = $table2.$pk ";
+        $queryStatement = $this->db->connectToDB()->prepare($sql);
+        $queryStatement->execute();
+
+        return $queryStatement->fetchAll();
+    }
+
+    public function fetchOneWithLeftJoin($selector, $table, $table2, $fk, $pk, $id){
+        $sql = "SELECT $selector FROM  $table LEFT JOIN $table2 ON $table.$fk = $table2.$pk WHERE id_$table = $id";
+
+        $queryStatement = $this->db->connectToDB()->prepare($sql);
+        $queryStatement->execute();
+
+        return $queryStatement->fetchObject();
+    }
+
     public function fetchOneById($selector, $table, $id)
     {
-        $sql = "SELECT $selector FROM  $table WHERE id = $id ";
+        $sql = "SELECT $selector FROM  $table WHERE id_$table = $id ";
         $queryStatement = $this->db->connectToDB()->prepare($sql);
         $queryStatement->execute();
 
@@ -38,20 +55,18 @@ abstract class QueryManager
     public function insert($table, array $params)
     {
         if (!empty($params)) {
-
             $this->getDatas($params);
 
             $sqlColumns = implode(',', $this->columns);
             $sqlParams = implode(',', $this->datas);
             try {
                 $sql = "INSERT INTO $table($sqlColumns) VALUES($sqlParams);";
+
                 $queryStatement = $this->db->connectToDB()->prepare($sql);
                 $queryStatement->execute($this->values);
             } catch (\Exception $exception) {
                 echo 'erreur lors de l\'ajout';
             }
-
-
         }
     }
 

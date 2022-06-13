@@ -20,10 +20,11 @@ class Route
             'login' => ['login', AuthController::class, 'showFormLogIn', 'GET'],
             'registerUser' => ['registerUser', UserController::class, 'addUser', 'POST'],
             'newPost' => ['newPost', ArticleController::class, 'showFormArticle', 'GET'],
+            'addArticle' => ['addArticle', ArticleController::class, 'addArticle', 'POST'],
             'user' => ['user/{id}', UserController::class, 'showUser', 'GET'],
-            'article' => ['article', ArticleController::class, 'showArticle', 'GET'],
-            'updateUser' => ['user/updateUser/{id}', UserController::class, 'updateUser', 'POST'],
-            'deleteUser' => ['user/deleteUser/{id}', UserController::class, 'deleteUser', 'GET']
+            'article' => ['article/{id_article}', ArticleController::class, 'showArticle', 'GET'],
+            'updateUser' => ['user/updateUser/{id_user}', UserController::class, 'updateUser', 'POST'],
+            'deleteUser' => ['user/deleteUser/{id_user}', UserController::class, 'deleteUser', 'GET']
         ];
     }
 

@@ -7,7 +7,7 @@ class UserManager extends QueryManager
 {
     private string $user = 'user';
     private string $all = '*';
-    private string $id = 'id';
+    private string $id = 'id_user';
     private string $name = 'name';
     private string $firstName = 'firstName';
     private string $email = 'email';

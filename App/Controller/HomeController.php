@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Helper\TwigHelper;
-use App\Manager\UserManager;
 
 class HomeController
 {
