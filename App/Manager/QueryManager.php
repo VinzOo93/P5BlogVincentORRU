@@ -26,20 +26,56 @@ abstract class QueryManager
         return $queryStatement->fetchAll();
     }
 
-    public function fetchAllWithLeftJoin($selector, $table, $table2, $fk, $pk){
-        $sql = "SELECT $selector FROM  $table LEFT JOIN $table2 ON $table.$fk = $table2.$pk ";
-        $queryStatement = $this->db->connectToDB()->prepare($sql);
-        $queryStatement->execute();
+    public function fetchAllWithLeftJoin($selector, $table, array $leftjoins, array $columns, $orderBy = null)
+    {
+        $leftQuery[] = null;
 
+        if (count($leftjoins) <= 3) {
+
+            foreach ($leftjoins as $key => $paramLeft) {
+                $column1 = array_search($key, $columns);
+                $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
+            }
+            $leftQuery = implode(' ', $leftQuery);
+
+            $sql = "SELECT $selector FROM  $table $leftQuery $orderBy";
+
+            $queryStatement = $this->db->connectToDB()->prepare($sql);
+            $queryStatement->execute();
+
+        }
         return $queryStatement->fetchAll();
     }
+    public function fetchOneWithLeftJoin($selector, $table, array $leftjoins, array $columns,array $where)
+    {
 
-    public function fetchOneWithLeftJoin($selector, $table, $table2, $fk, $pk, $id){
-        $sql = "SELECT $selector FROM  $table LEFT JOIN $table2 ON $table.$fk = $table2.$pk WHERE id_$table = $id";
+        $leftQuery[] = null;
+        $whereQuery[] = null;
+        $count = 0;
+        if (count($leftjoins) <= 3 && count($where)<= 3) {
 
-        $queryStatement = $this->db->connectToDB()->prepare($sql);
-        $queryStatement->execute();
+            foreach ($leftjoins as $key => $paramLeft) {
+                $column1 = array_search($key, $columns);
+                $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
+            }
 
+            foreach ($where as $key => $paramWhere) {
+                $count++;
+                if ($count <= 1) {
+                    $whereQuery[] = "$key = '$paramWhere'";
+                } else {
+                    $whereQuery[] = "AND $key = '$paramWhere'";
+                }
+            }
+
+            $leftQuery = implode(' ', $leftQuery);
+            $whereQuery = implode(' ', $whereQuery);
+
+            $sql = "SELECT $selector FROM  $table $leftQuery  WHERE $whereQuery";
+
+            $queryStatement = $this->db->connectToDB()->prepare($sql);
+            $queryStatement->execute();
+        }
         return $queryStatement->fetchObject();
     }
 

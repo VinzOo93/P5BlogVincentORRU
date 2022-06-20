@@ -89,7 +89,7 @@ class Router
                     && array_slice($explodeUrl, 0, count($explodeUrl)-1) === array_slice($explodeRoute, 0, count($explodeRoute)-1)) {
                    $needle = $needle->get_string_between(implode('/',$explodeRoute), '{','}');
                    if (array_search('{'.$needle.'}', $explodeRoute)) {
-                        $this->param = filter_var($this->url, FILTER_SANITIZE_NUMBER_INT);
+                        $this->param = substr($this->url, stripos($this->url, '/' ) + 1);
                         $route = array_replace($explodeRoute, $explodeUrl);
                         $route = implode("/", $route);
                     }

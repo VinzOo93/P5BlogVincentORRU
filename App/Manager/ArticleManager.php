@@ -17,12 +17,25 @@ class ArticleManager extends QueryManager
 
     public function selectAllArticles()
     {
-        return $this->fetchAllWithLeftJoin($this->all, $this->article, $this->user, $this->author, $this->id);
+        $leftJoins = [$this->id => $this->user];
+
+        $columns = [$this->author => $this->id];
+
+        $orderBy = "ORDER BY $this->datePublished DESC";
+
+        return $this->fetchAllWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $orderBy);
     }
 
-    public function selectOneArticle($id)
+    public function selectOneArticle($article)
     {
-        return $this->fetchOneWithLeftJoin($this->all,$this->article,$this->user, $this->author, $this->id, $id);
+
+        $leftJoins = [$this->id => $this->user];
+
+        $columns = [$this->author => $this->id];
+
+        $where = [$this->title => $article];
+
+        return $this->fetchOneWithLeftJoin($this->all,$this->article,$leftJoins, $columns, $where);
 
     }
 

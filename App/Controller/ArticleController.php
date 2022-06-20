@@ -9,13 +9,12 @@ use Exception;
 
 class ArticleController
 {
-    public static function showArticle($id)
+    public static function showArticle($article)
     {
         $twig = new TwigHelper();
-
         $articleManager = new ArticleManager();
 
-        $article = $articleManager->selectOneArticle($id);
+        $article = $articleManager->selectOneArticle($article);
 
         $twig->loadTwig()->display('article/showArticle.html.twig', ['article' => $article]);
     }
@@ -30,21 +29,30 @@ class ArticleController
     public static function addArticle(array $data = [])
     {
         $request = new  Request();
+        $pathUploadDir = '../public/images/articles/';
         try {
             $title = $data['title'];
             $tags = $data['tag'];
-            $image = 'img-article-3';
+
+            if (isset($_FILES['image'])){
+                $imageTmpName = $_FILES["image"]['tmp_name'];
+                $imgName = $_FILES["image"]['name'];
+
+            move_uploaded_file($imageTmpName, "$pathUploadDir$imgName" );
+            }
+
             $content = $data['content'];
             $datePublished = new \DateTime('NOW');
+            $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
             $author = 7;
 
             $articleManager = new ArticleManager();
             $articleManager->insertArticle(
                 $title,
                 $tags,
-                $image,
+                $imgName,
                 $content,
-                $datePublished->format('d/m/y H:i:s'),
+                $datePublished->format('Y-m-d H:i:sP'),
                 $author);
 
             $request->redirectToRoute('blogIndex');
