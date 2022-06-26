@@ -33,6 +33,7 @@ class ArticleController
         try {
             $title = $data['title'];
             $tags = $data['tag'];
+            $slug = preg_replace('/\s+/','-', $title );
 
             if (isset($_FILES['image'])){
                 $imageTmpName = $_FILES["image"]['tmp_name'];
@@ -44,16 +45,18 @@ class ArticleController
             $content = $data['content'];
             $datePublished = new \DateTime('NOW');
             $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
-            $author = 7;
+            $author = 1;
 
             $articleManager = new ArticleManager();
             $articleManager->insertArticle(
                 $title,
+                $slug,
                 $tags,
                 $imgName,
                 $content,
                 $datePublished->format('Y-m-d H:i:sP'),
-                $author);
+                $author
+            );
 
             $request->redirectToRoute('blogIndex');
             echo 'Le nouvel article a été ajouté avec succès <br>';

@@ -61,6 +61,9 @@ abstract class QueryManager
 
             foreach ($where as $key => $paramWhere) {
                 $count++;
+                if (strpos($paramWhere, "'") !== false){
+                    $paramWhere = str_replace("'","''", $paramWhere);
+                }
                 if ($count <= 1) {
                     $whereQuery[] = "$key = '$paramWhere'";
                 } else {
@@ -72,7 +75,6 @@ abstract class QueryManager
             $whereQuery = implode(' ', $whereQuery);
 
             $sql = "SELECT $selector FROM  $table $leftQuery  WHERE $whereQuery";
-
             $queryStatement = $this->db->connectToDB()->prepare($sql);
             $queryStatement->execute();
         }

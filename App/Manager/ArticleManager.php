@@ -6,6 +6,7 @@ class ArticleManager extends QueryManager
 {
     private string $article = 'article';
     private string $title = 'title';
+    private string $slug = 'slug';
     private string $tags = 'tag';
     private string $image = 'image';
     private string $content = 'content';
@@ -33,21 +34,24 @@ class ArticleManager extends QueryManager
 
         $columns = [$this->author => $this->id];
 
-        $where = [$this->title => $article];
+        $where = [$this->slug => $article];
 
         return $this->fetchOneWithLeftJoin($this->all,$this->article,$leftJoins, $columns, $where);
 
     }
 
-    public function insertArticle($title,$tags,$image,$content,$datePublished,$author)
+    public function insertArticle($title,$slug,$tags,$image,$content,$datePublished,$author)
     {
          $this->insert($this->article,
-            [   $this->title => $title,
+            [
+                $this->title => $title,
+                $this->slug => $slug,
                 $this->tags => $tags,
                 $this->image => $image,
                 $this->content => $content,
                 $this->datePublished => $datePublished,
-                $this->author => $author    ]);
+                $this->author => $author
+            ]);
     }
 
 }
