@@ -42,7 +42,8 @@ class ArticleManager extends QueryManager
 
     public function insertArticle($title,$slug,$tags,$image,$content,$datePublished,$author)
     {
-         $this->insert($this->article,
+         $this->insert(
+             $this->article,
             [
                 $this->title => $title,
                 $this->slug => $slug,
@@ -51,7 +52,8 @@ class ArticleManager extends QueryManager
                 $this->content => $content,
                 $this->datePublished => $datePublished,
                 $this->author => $author
-            ]);
+            ]
+         );
     }
 
 }

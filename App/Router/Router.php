@@ -87,7 +87,7 @@ class Router
 
                 if (count($explodeUrl) > 1 && count($explodeRoute) > 1
                     && array_slice($explodeUrl, 0, count($explodeUrl)-1) === array_slice($explodeRoute, 0, count($explodeRoute)-1)) {
-                   $needle = $needle->get_string_between(implode('/',$explodeRoute), '{','}');
+                   $needle = $needle->getStringBetween(implode('/',$explodeRoute), '{','}');
                    if (array_search('{'.$needle.'}', $explodeRoute)) {
                         $this->param = substr($this->url, stripos($this->url, '/' ) + 1);
                         $route = array_replace($explodeRoute, $explodeUrl);

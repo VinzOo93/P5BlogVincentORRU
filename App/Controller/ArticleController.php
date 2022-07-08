@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
 use App\Router\Request;
@@ -28,20 +29,29 @@ class ArticleController
 
     public static function addArticle(array $data = [])
     {
+        $functionHelper = new FunctionHelper;
         $request = new  Request();
         $pathUploadDir = '../public/images/articles/';
+        $uniq = uniqid();
         try {
+            $newDirPath = "$pathUploadDir$uniq";
+            mkdir($newDirPath);
             $title = $data['title'];
             $tags = $data['tag'];
-            $slug = preg_replace('/\s+/','-', $title );
+            $slug = strtolower(preg_replace('/\s+/','-', $title ));
 
+            $slugReady = $functionHelper->removeSpecialAndAccent($slug);
             if (isset($_FILES['image'])){
-                $imageTmpName = $_FILES["image"]['tmp_name'];
-                $imgName = $_FILES["image"]['name'];
-
-            move_uploaded_file($imageTmpName, "$pathUploadDir$imgName" );
+                $imageTmpName = $_FILES['image']['tmp_name'];
+                $imgName = $_FILES['image']['name'];
+                $imgSlug = "$newDirPath/$imgName";
+                move_uploaded_file(
+                    $imageTmpName,
+                    $imgSlug
+                );
             }
-
+            $slugImageToSlug = str_split($imgSlug, 17);
+            unset($slugImageToSlug[0]);
             $content = $data['content'];
             $datePublished = new \DateTime('NOW');
             $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
@@ -50,9 +60,9 @@ class ArticleController
             $articleManager = new ArticleManager();
             $articleManager->insertArticle(
                 $title,
-                $slug,
+                $slugReady,
                 $tags,
-                $imgName,
+                implode($slugImageToSlug),
                 $content,
                 $datePublished->format('Y-m-d H:i:sP'),
                 $author
