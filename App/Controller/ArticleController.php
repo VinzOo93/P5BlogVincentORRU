@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
+use App\Manager\UserManager;
 use App\Router\Request;
 use Exception;
 
@@ -12,12 +13,20 @@ class ArticleController
 {
     public static function showArticle($article)
     {
+        session_start();
+
         $twig = new TwigHelper();
+        $user = null;
         $articleManager = new ArticleManager();
 
         $article = $articleManager->selectOneArticle($article);
 
-        $twig->loadTwig()->display('article/showArticle.html.twig', ['article' => $article]);
+        if (isset($_SESSION)){
+            $userManager = new UserManager();
+            $user = $userManager->selectUser($_SESSION['userId']);
+        }
+
+        $twig->loadTwig()->display('article/showArticle.html.twig', ['article' => $article, 'user' => $user]);
     }
 
     public static function showFormArticle()

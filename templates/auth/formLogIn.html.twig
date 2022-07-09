@@ -8,13 +8,21 @@
 {% endblock %}
 {% block content %}
     <h1 class="title has-text-centered">Connexion</h1>
+     {% if error %}
+         <article class="message is-danger">
+             <div class="message-header">
+                 <p>{{ error.error }}</p>
+                 <button class="delete" aria-label="delete"></button>
+             </div>
+         </article>
+     {% endif %}
     <section class="hero">
         <div class="hero-body">
-            <form class="container"  action="/registerUser" method="post">
+            <form class="container"  action="/launchSession" method="post">
                 <label class="label" for="email">email</label>
                 <input class="input is-normal" type="text" name="email">
                 <label class="label"for="password">password</label>
-                <input  class="input is-normal" type="text" name="password">
+                <input  class="input is-normal" type="password" name="password">
                 <button class="button hero-buttons" type="submit">Me connecter</button>
             </form>
         </div>

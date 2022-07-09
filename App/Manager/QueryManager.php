@@ -26,6 +26,24 @@ abstract class QueryManager
         return $queryStatement->fetchAll();
     }
 
+    public function fetchOneNoLeftJoin($table, $selector ,array $params = null) {
+
+
+        if (isset($params)){
+            foreach ($params as $key => $value ) {
+                $whereQuery[] = "$key = '$value'";
+            }
+            $whereStr = implode(" AND ",$whereQuery);
+
+            $sql = "SELECT $selector FROM $table WHERE $whereStr";
+            $queryStatement = $this->db->connectToDB()->prepare($sql);
+            $queryStatement->execute();
+
+        }
+
+        return $queryStatement->fetch();
+    }
+
     public function fetchAllWithLeftJoin($selector, $table, array $leftjoins, array $columns, $orderBy = null)
     {
         $leftQuery[] = null;
@@ -46,7 +64,7 @@ abstract class QueryManager
         }
         return $queryStatement->fetchAll();
     }
-    public function fetchOneWithLeftJoin($selector, $table, array $leftjoins, array $columns,array $where)
+    public function fetchOneWithLeftJoin($selector, $table, array $leftjoins, array $columns, array $where)
     {
 
         $leftQuery[] = null;
