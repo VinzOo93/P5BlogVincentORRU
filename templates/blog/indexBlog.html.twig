@@ -6,6 +6,7 @@
     {% include "blog/headerBlog.html.twig" %}
 {% endblock %}
 {% block content %}
+    {% include "/messageSuccess.html.twig" %}
     <div class="columns body-columns">
         <div class="column is-half is-offset-one-quarter">
             {% for article in articles %}

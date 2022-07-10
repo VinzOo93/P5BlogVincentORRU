@@ -11,10 +11,10 @@ use Exception;
 class UserController
 {
 
-    public static function showFormAddUser()
+    public static function showFormAddUser($message = null)
     {
         $twig = new TwigHelper();
-        $twig->loadTwig()->display('user/formAddUser.html.twig');
+        $twig->loadTwig()->display('user/formAddUser.html.twig', ['message' => $message]);
     }
 
     public static function addUser(array $data = [])
@@ -24,15 +24,30 @@ class UserController
             $name = $data['name'];
             $firstName = $data['firstName'];
             $email = $data['email'];
+            $role = 'user';
             $password = $data['password'];
-
-            $userManager = new UserManager();
-            $userManager->insertUser($name, $firstName, $email, $password);
-
-            $request->redirectToRoute('blog');
-            echo 'Le nouvel utilisateur a été ajouté <br>';
+            if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
+                if (strlen($password) < 6) {
+                    $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
+                } else {
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $userManager = new UserManager();
+                        $registredUserMail = $userManager->selectByMail($email);
+                        if ($registredUserMail) {
+                            $request->redirectToRoute('register', ['error' => "L'identfiant mail est déja utilisé ! "]);
+                        } else {
+                            $userManager->insertUser($name, $firstName, $email, $role, $password);
+                            $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
+                        }
+                    } else {
+                        $request->redirectToRoute('register', ['error' => "Le champ email ne correspond pas à la synthaxe d'une adresse mail"]);
+                    }
+                }
+            } else {
+                $request->redirectToRoute('register', ['error' => "Merci de remplir l'intégralité des champs du formulaire !"]);
+            }
         } catch (Exception $e) {
-            echo 'erreur lors de l\'ajout' . $e;
+            $request->redirectToRoute('register', ['error' => "Erreur Lors de l'enregistrement ! $e"]);
         }
     }
 
@@ -46,7 +61,8 @@ class UserController
         $twig->loadTwig()->display('showUser.html.twig', ['user' => $user]);
     }
 
-    public static function updateUser($data, $id) {
+    public static function updateUser($data, $id)
+    {
         $request = new  Request();
 
         try {
@@ -61,12 +77,13 @@ class UserController
             $request->redirectToRoute('user', $id);
             echo 'utilisateur modifié <br>';
 
-        } catch (Exception $e){
-            echo 'erreur lors de la mise à jour . '.$e;
+        } catch (Exception $e) {
+            echo 'erreur lors de la mise à jour . ' . $e;
         }
     }
 
-    public static function deleteUser($id) {
+    public static function deleteUser($id)
+    {
         $userManager = new UserManager();
         $request = new  Request();
         try {
@@ -74,7 +91,7 @@ class UserController
             $request->redirectToRoute('home');
             echo 'utilisateur supprimé <br>';
         } catch (Exception $e) {
-            echo 'erreur lors de la suppression' .$e;
+            echo 'erreur lors de la suppression' . $e;
         }
 
     }

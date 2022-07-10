@@ -8,17 +8,16 @@ use App\Manager\UserManager;
 
 class BlogController
 {
-    public static function showBlog()
+    public static function showBlog($message = null)
     {
         $twig = new TwigHelper();
-        $user = null;
         $articleManager = new ArticleManager();
+        $user = null;
         $articles = $articleManager->selectAllArticles();
-
-        if (isset($_SESSION)){
+        if (!empty($_SESSION)){
             $userManager = new UserManager();
             $user = $userManager->selectUser($_SESSION['userId']);
         }
-        $twig->loadTwig()->display('blog/indexBlog.html.twig', ['articles' => $articles, 'user' => $user]);
+        $twig->loadTwig()->display('blog/indexBlog.html.twig', ['articles' => $articles, 'user' => $user, 'message' => $message]);
     }
 }

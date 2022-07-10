@@ -27,6 +27,13 @@ class ArticleManager extends QueryManager
         return $this->fetchAllWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $orderBy);
     }
 
+    public function selectOneArticleByTitle($title)
+    {
+
+        return $this->fetchOneNoLeftJoin($this->article,$this->title, [$this->title => $title]);
+
+    }
+
     public function selectOneArticle($article)
     {
 

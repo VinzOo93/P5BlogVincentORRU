@@ -63,6 +63,10 @@ class Router
     public function run()
     {
         $routeItem = new Route();
+        $functionHelper = new FunctionHelper();
+
+        $functionHelper->startSession();
+
         $this->routes = $routeItem->getRoutes();
         if (!isset($this->routes)) {
             throw new  RouterException('No routes matchs');

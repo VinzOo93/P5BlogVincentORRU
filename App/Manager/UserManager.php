@@ -11,6 +11,7 @@ class UserManager extends QueryManager
     private string $name = 'name';
     private string $firstName = 'firstName';
     private string $email = 'email';
+    private string $role = 'role';
     private string $password = 'password';
 
     public function selectAllUsers()
@@ -18,9 +19,14 @@ class UserManager extends QueryManager
         return $this->fetchAll($this->all, $this->user);
     }
 
-    public function insertUser($name, $firstName, $email, $password)
+    public function selectByMail($email)
     {
-        $this->insert($this->user,[$this->name => $name, $this->firstName => $firstName, $this->email => $email, $this->password => $password]);
+        return $this->fetchOneNoLeftJoin($this->user, $this->email, [$this->email => $email]);
+    }
+
+    public function insertUser($name, $firstName, $email, $role, $password)
+    {
+        $this->insert($this->user,[$this->name => $name, $this->firstName => $firstName, $this->email => $email, $this->role => $role, $this->password => $password]);
     }
 
     public function selectUser($id)

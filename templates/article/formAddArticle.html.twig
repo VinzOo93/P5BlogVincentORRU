@@ -7,6 +7,7 @@
 {% endblock %}
 {% block content %}
     <h1 class="title has-text-centered">Publier un article</h1>
+    {% include "messageError.html.twig"%}
     <section class="hero">
         <div class="hero-body">
             <form class="container"  action="/addArticle" method="post" enctype="multipart/form-data">
