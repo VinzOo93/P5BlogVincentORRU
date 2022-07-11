@@ -117,7 +117,6 @@ abstract class QueryManager
             $sqlParams = implode(',', $this->datas);
             try {
                 $sql = "INSERT INTO $table($sqlColumns) VALUES($sqlParams);";
-
                 $queryStatement = $this->db->connectToDB()->prepare($sql);
                 $queryStatement->execute($this->values);
             } catch (\Exception $exception) {

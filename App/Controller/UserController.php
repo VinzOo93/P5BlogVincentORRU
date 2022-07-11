@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\UserManager;
 use App\Router\Request;
@@ -20,12 +21,19 @@ class UserController
     public static function addUser(array $data = [])
     {
         $request = new  Request();
+        $functionHelper = new FunctionHelper();
+        $pathUploadDir = '../public/images/users/';
+
+        $uniq = uniqid();
+
         try {
             $name = $data['name'];
             $firstName = $data['firstName'];
             $email = $data['email'];
             $role = 'user';
             $password = $data['password'];
+            $newDirPath = "$pathUploadDir$uniq";
+
             if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
                 if (strlen($password) < 6) {
                     $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
@@ -36,8 +44,20 @@ class UserController
                         if ($registredUserMail) {
                             $request->redirectToRoute('register', ['error' => "L'identfiant mail est déja utilisé ! "]);
                         } else {
-                            $userManager->insertUser($name, $firstName, $email, $role, $password);
-                            $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
+                            $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
+                            if ($slugImageToSlug === false) {
+                                $request->redirectToRoute('register', ['error' => "L'ajout d'image est obligatoire et doit au être format JPG"]);
+                            } else {
+                                $userManager->insertUser(
+                                    $name,
+                                    $firstName,
+                                    $email,
+                                    $role,
+                                    implode($slugImageToSlug),
+                                    $password
+                                );
+                                $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
+                            }
                         }
                     } else {
                         $request->redirectToRoute('register', ['error' => "Le champ email ne correspond pas à la synthaxe d'une adresse mail"]);

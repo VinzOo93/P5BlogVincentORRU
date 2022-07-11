@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
-use App\Manager\UserManager;
 use App\Router\Request;
 use Exception;
 
@@ -14,31 +13,23 @@ class ArticleController
     public static function showArticle($article)
     {
         $functionHelper = new FunctionHelper();
-
-        $functionHelper->startSession();
-
         $twig = new TwigHelper();
         $user = null;
         $articleManager = new ArticleManager();
 
         $article = $articleManager->selectOneArticle($article);
 
-        if (isset($_SESSION)) {
-            $userManager = new UserManager();
-            $user = $userManager->selectUser($_SESSION['userId']);
-        }
+        $user = $functionHelper->checkActiveUserInSession();
 
         $twig->loadTwig()->display('article/showArticle.html.twig', ['article' => $article, 'user' => $user]);
     }
 
     public static function showFormArticle($message = null)
     {
-
         $twig = new TwigHelper();
-        $userManager = new UserManager();
+        $functionHelper = new FunctionHelper();
 
-
-        $user = $userManager->selectUser($_SESSION['userId']);
+        $user = $functionHelper->checkActiveUserInSession();
 
         $twig->loadTwig()->display('article/formAddArticle.html.twig', ['message' => $message, 'user' => $user]);
     }
@@ -64,55 +55,40 @@ class ArticleController
                     $slug = strtolower(preg_replace('/\s+/', '-', $title));
                     $slugReady = $functionHelper->removeSpecialAndAccent($slug);
 
-                    if ($_FILES['image']['size'] != 0) {
-                        $imageTmpName = $_FILES['image']['tmp_name'];
-                        $imgName = $_FILES['image']['name'];
+                    $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
 
-                            if(pathinfo($imgName, PATHINFO_EXTENSION) === 'jpg') {
-                                $imgSlug = "$newDirPath/$imgName";
-                                mkdir($newDirPath);
-                                move_uploaded_file(
-                                    $imageTmpName,
-                                    $imgSlug
-                                );
-                                $slugImageToSlug = str_split($imgSlug, 17);
-                                unset($slugImageToSlug[0]);
-                            }  else {
-                                $request->redirectToRoute('newPost', ['error' => "L'image doit être au format JPG"]);
-                           die();
-                            }
+                    if ($slugImageToSlug === false) {
+                        $request->redirectToRoute('newPost', ['error' => "L'ajout d'image est obligatoire et doit au être format JPG"]);
                     } else {
-                        $request->redirectToRoute('newPost', ['error' => 'un article doit comporter une image !']);
-                    die();
-                    }
-                    $datePublished = new \DateTime('NOW');
-                    $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
-                    $author = $_SESSION['userId'];
+                        $datePublished = new \DateTime('NOW');
+                        $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
+                        $author = $_SESSION['userId'];
 
-                    $articleManager = new ArticleManager();
-                    $registredTitle = $articleManager->selectOneArticleByTitle($title);
+                        $articleManager = new ArticleManager();
+                        $registredTitle = $articleManager->selectOneArticleByTitle($title);
 
-                    if ($registredTitle) {
-                        $request->redirectToRoute('newPost', ['error' => "le titre : $title est déjà utilisé"]);
-                    } else {
-                        $articleManager->insertArticle(
-                            $title,
-                            $slugReady,
-                            $tags,
-                            implode($slugImageToSlug),
-                            $content,
-                            $datePublished->format('Y-m-d H:i:sP'),
-                            $author
-                        );
-                        $request->redirectToRoute('blogIndex', ['success' => "L'article : '$title' a été ajouté avec succès !"]);
+                        if ($registredTitle) {
+                            $request->redirectToRoute('newPost', ['error' => "Le titre : $title est déjà utilisé"]);
+                        } else {
+                            $articleManager->insertArticle(
+                                $title,
+                                $slugReady,
+                                $tags,
+                                implode($slugImageToSlug),
+                                $content,
+                                $datePublished->format('Y-m-d H:i:sP'),
+                                $author
+                            );
+                            $request->redirectToRoute('blogIndex', ['success' => "L'article : '$title' a été publié !"]);
+                        }
                     }
                 } else {
-                    $request->redirectToRoute('newPost', ['error' => 'un article doit comporter obligatoirement un titre et un contenu']);
+                    $request->redirectToRoute('newPost', ['error' => 'Un article doit comporter obligatoirement un titre et un contenu']);
                 }
             }
         } catch
         (Exception $e) {
-            $request->redirectToRoute('newPost', ['error' => "erreur lors de l\'ajout : $e"]);
+            $request->redirectToRoute('newPost', ['error' => "Erreur lors de l\'ajout : $e"]);
         }
     }
 }

@@ -33,7 +33,7 @@ class AuthController
 
                     $request->redirectToRoute('blogIndex');
                 } else {
-                $request->redirectToRoute('newPost', ['error' => 'Saisie incorrect vérifiez votre mail et votre mot de passe']);
+                $request->redirectToRoute('login', ['error' => 'Saisie incorrect vérifiez votre mail et votre mot de passe']);
             }
         }
     }
