@@ -14,7 +14,6 @@ class ArticleController
     {
         $functionHelper = new FunctionHelper();
         $twig = new TwigHelper();
-        $user = null;
         $articleManager = new ArticleManager();
 
         $article = $articleManager->selectOneArticle($article);
@@ -34,6 +33,17 @@ class ArticleController
         $twig->loadTwig()->display('article/formAddArticle.html.twig', ['message' => $message, 'user' => $user]);
     }
 
+    public static function manageArticles()
+    {
+        $twig = new TwigHelper();
+        $functionHelper = new FunctionHelper();
+        $articleManager = new ArticleManager();
+
+        $user = $functionHelper->checkActiveUserInSession();
+        $articles = $articleManager->selectArticleByUser($user);
+        $twig->loadTwig()->display('article/manageArticles.html.twig', ['user' => $user, 'articles' => $articles]);
+    }
+
     public static function addArticle(array $data = [])
     {
         $functionHelper = new FunctionHelper;
@@ -49,6 +59,8 @@ class ArticleController
 
             if (!empty($tags) && strpos($tags, ';') === false) {
                 $request->redirectToRoute('newPost', ['error' => 'Veuillez remplir le champ tag comme suivi => bateau;chat;chocolat']);
+            } elseif (strlen($title) > 255 || strlen($tags) > 255 || strlen($_FILES['name']) > 255 || strlen($password) > 255) {
+                $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
             } else {
                 if (!empty($title) && !empty($content)) {
 

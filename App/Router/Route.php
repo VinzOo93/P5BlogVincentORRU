@@ -23,6 +23,7 @@ class Route
             'registerUser' => ['registerUser', UserController::class, 'addUser', 'POST'],
             'newPost' => ['newPost', ArticleController::class, 'showFormArticle', 'GET'],
             'addArticle' => ['addArticle', ArticleController::class, 'addArticle', 'POST'],
+            'manageArticles' => ['manageArticles/{id_user}', ArticleController::class, 'manageArticles', 'GET'],
             'user' => ['user/{id}', UserController::class, 'showUser', 'GET'],
             'article' => ['article/{slug}', ArticleController::class, 'showArticle', 'GET'],
             'updateUser' => ['user/updateUser/{id_user}', UserController::class, 'updateUser', 'POST'],

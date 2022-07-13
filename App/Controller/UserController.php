@@ -37,6 +37,8 @@ class UserController
             if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
                 if (strlen($password) < 6) {
                     $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
+                } elseif ( strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['name']) > 255 ||strlen($password) > 255){
+                    $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
                 } else {
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $userManager = new UserManager();

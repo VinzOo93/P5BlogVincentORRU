@@ -16,15 +16,16 @@ class ArticleManager extends QueryManager
     private string $id = 'id_user';
     private string $all = '*';
 
+
     public function selectAllArticles()
     {
         $leftJoins = [$this->id => $this->user];
-
         $columns = [$this->author => $this->id];
+        $where[] = null;
 
         $orderBy = "ORDER BY $this->datePublished DESC";
 
-        return $this->fetchAllWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $orderBy);
+        return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $where ,$orderBy);
     }
 
     public function selectOneArticleByTitle($title)
@@ -34,13 +35,21 @@ class ArticleManager extends QueryManager
 
     }
 
+    public function selectArticleByUser($user){
+        $leftJoins[] = null;
+        $columns[] = null;
+        $where = [$this->author => $user['id_user']];
+        $orderBy = "ORDER BY $this->datePublished DESC";
+
+
+        return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins ,$columns , $where, $orderBy);
+    }
+
     public function selectOneArticle($article)
     {
 
         $leftJoins = [$this->id => $this->user];
-
         $columns = [$this->author => $this->id];
-
         $where = [$this->slug => $article];
 
         return $this->fetchOneWithLeftJoin($this->all,$this->article,$leftJoins, $columns, $where);

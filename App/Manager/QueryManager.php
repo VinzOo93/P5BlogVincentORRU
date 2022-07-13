@@ -44,20 +44,37 @@ abstract class QueryManager
         return $queryStatement->fetch();
     }
 
-    public function fetchAllWithLeftJoin($selector, $table, array $leftjoins, array $columns, $orderBy = null)
+    public function fetchWithLeftJoin($selector, $table, array $leftjoins, array $columns, array $where, $orderBy = null)
     {
-        $leftQuery[] = null;
 
         if (count($leftjoins) <= 3) {
 
-            foreach ($leftjoins as $key => $paramLeft) {
-                $column1 = array_search($key, $columns);
-                $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
+            if (!empty($leftQuery) && !empty($columns)){
+                foreach ($leftjoins as $key => $paramLeft) {
+                    $column1 = array_search($key, $columns);
+                    $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
+                }
+                $leftQuery = implode(' ', $leftQuery);
+            } else {
+                $leftQuery = '';
             }
-            $leftQuery = implode(' ', $leftQuery);
+            if (!empty($where)) {
+                $whereQuery[] = "WHERE ";
+                $count = 0;
+                foreach ($where as $column => $value) {
+                    if ($count === 0){
+                        $whereQuery[] = "$column = '$value'";
+                    } else {
+                        $whereQuery[] = ",$column = '$value'";
+                    }
+                    $count++;
+                }
+                $whereQuery = implode('', $whereQuery);
+            } else {
+                $whereQuery = '';
+            }
 
-            $sql = "SELECT $selector FROM  $table $leftQuery $orderBy";
-
+            $sql = "SELECT $selector FROM $table $leftQuery $whereQuery $orderBy";
             $queryStatement = $this->db->connectToDB()->prepare($sql);
             $queryStatement->execute();
 
@@ -105,7 +122,7 @@ abstract class QueryManager
         $queryStatement = $this->db->connectToDB()->prepare($sql);
         $queryStatement->execute();
 
-        return $queryStatement->fetchObject();
+        return $queryStatement->fetch();
     }
 
     public function insert($table, array $params)

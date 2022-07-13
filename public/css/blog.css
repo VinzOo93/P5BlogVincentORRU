@@ -14,3 +14,32 @@
     background-position: center center !important;
     background-size: cover!important;
 }
+
+.tableAdmin {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-article {
+    margin-left: 2vw;
+    margin-right: 2vw;
+}
+
+@media screen and  (min-width: 768px) {
+    .tableAdmin {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and  (max-width: 768px) {
+    .tableAdmin {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .grid-article {
+        margin-top: 2vh;
+        margin-bottom: 2vh;
+    }
+}
