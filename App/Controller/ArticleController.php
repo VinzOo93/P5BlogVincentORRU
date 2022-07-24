@@ -105,4 +105,32 @@ class ArticleController
             $request->redirectToRoute('newPost', ['error' => "Erreur lors de l\'ajout : $e"]);
         }
     }
+
+    public static function deleteArticle($slug)
+    {
+        $articleManager = new ArticleManager();
+        $request = new Request();
+        $pathUploadDir = '../public/images/';
+
+        try {
+
+           $imageArray = $articleManager->selectImagePath($slug);
+
+           if ($imageArray != null) {
+               $imagePath = $imageArray['image'];
+               $pathFile = "$pathUploadDir$imagePath";
+                if (file_exists($pathFile)){
+                    $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
+                    $folderPath = "$pathUploadDir$folder";
+                    unlink($pathFile);
+                    rmdir($folderPath);
+                }
+           }
+
+            $articleManager->deleteArticle($slug);
+            $request->redirectToRoute('blog',['success' => "L'article a bien été supprimé"]);
+        } catch (Exception $e){
+            $request->redirectToRoute('blog',['error' => "Erreur lors de la suppression de l'article $e"]);
+        }
+    }
 }

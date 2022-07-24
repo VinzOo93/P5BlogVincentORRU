@@ -35,8 +35,8 @@ class ArticleManager extends QueryManager
     }
 
     public function selectArticleByUser($user){
-        $leftJoins[] = null;
-        $columns[] = null;
+        $leftJoins = [];
+        $columns = [];
         $where = [$this->author => $user['id_user']];
         $orderBy = "ORDER BY $this->datePublished DESC";
 
@@ -55,6 +55,11 @@ class ArticleManager extends QueryManager
 
     }
 
+    public function selectImagePath($slug)
+    {
+      return$this->fetchOneNoLeftJoin($this->article, $this->image, [$this->slug => $slug]);
+    }
+
     public function insertArticle($title,$slug,$tags,$image,$content,$datePublished,$author)
     {
          $this->insert(
@@ -69,6 +74,11 @@ class ArticleManager extends QueryManager
                 $this->author => $author
             ]
          );
+    }
+
+    public  function deleteArticle($slug)
+    {
+        $this->delete($this->article,$this->slug, $slug);
     }
 
 }

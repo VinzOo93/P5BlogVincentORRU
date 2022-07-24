@@ -29,6 +29,8 @@
 
                         <div class="content">
                             <time datetime="2016-1-1">{{ article.date_published|date('d-m-Y H:i:s') }}</time>
+                            <a class="button">Modifier</a>
+                            <a href="{{ '/deleteArticle/' ~ article.slug }}" class="button">❌</a>
                         </div>
                     </div>
                 </a>

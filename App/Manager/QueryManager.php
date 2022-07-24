@@ -27,8 +27,6 @@ abstract class QueryManager
     }
 
     public function fetchOneNoLeftJoin($table, $selector ,array $params = null) {
-
-
         if (isset($params)){
             foreach ($params as $key => $value ) {
                 $whereQuery[] = "$key = '$value'";
@@ -166,10 +164,10 @@ abstract class QueryManager
         }
     }
 
-    public function delete ($table, $id)
+    public function delete ($table, $colmun, $params)
     {
 
-        $sql = "DELETE FROM  $table WHERE id = $id ";
+        $sql = "DELETE FROM  $table WHERE $colmun = '$params' ";
         $queryStatement = $this->db->connectToDB()->prepare($sql);
         $queryStatement->execute();
         return $queryStatement->fetchObject();
