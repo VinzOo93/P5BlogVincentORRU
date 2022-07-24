@@ -37,7 +37,7 @@ class UserController
             if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
                 if (strlen($password) < 6) {
                     $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
-                } elseif ( strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['name']) > 255 ||strlen($password) > 255){
+                } elseif ( strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['image']['name']) > 255 ||strlen($password) > 255){
                     $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
                 } else {
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -46,20 +46,24 @@ class UserController
                         if ($registredUserMail) {
                             $request->redirectToRoute('register', ['error' => "L'identfiant mail est déja utilisé ! "]);
                         } else {
-                            $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
-                            if ($slugImageToSlug === false) {
-                                $request->redirectToRoute('register', ['error' => "L'ajout d'image est obligatoire et doit au être format JPG"]);
+                            if ($_FILES['image']['size'] != 0) {
+                                $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
+                                 if ($slugImageToSlug === false ) {
+                                    $request->redirectToRoute('register', ['error' => "L'image doit au être format JPG"]);
+                                }
+                                $slugImageToSlug = implode($slugImageToSlug);
                             } else {
+                                $slugImageToSlug = null;
+                            }
                                 $userManager->insertUser(
                                     $name,
                                     $firstName,
                                     $email,
                                     $role,
-                                    implode($slugImageToSlug),
-                                    $password
+                                    $slugImageToSlug,
+                                    password_hash($password, PASSWORD_DEFAULT)
                                 );
                                 $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
-                            }
                         }
                     } else {
                         $request->redirectToRoute('register', ['error' => "Le champ email ne correspond pas à la synthaxe d'une adresse mail"]);
@@ -115,6 +119,5 @@ class UserController
         } catch (Exception $e) {
             echo 'erreur lors de la suppression' . $e;
         }
-
     }
 }

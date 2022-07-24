@@ -5,11 +5,8 @@ namespace App\Controller;
 use App\Helper\TwigHelper;
 use App\Manager\AuthManager;
 use App\Router\Request;
-use App\Helper\FunctionHelper;
 class AuthController
 {
-    private $error = null;
-
     public static function showFormLogIn($message = null)
     {
         $twig = new TwigHelper();
@@ -26,12 +23,19 @@ class AuthController
             $email = $data['email'];
             $password = $data['password'];
 
-            $loggedIn = $authManager->checkForLogIn($email, $password);
-                if ($loggedIn) {
-                    $_SESSION["userId"] = $loggedIn['id_user'];
-                    $_SESSION["userRole"] = $loggedIn['role'];
+            $userForChecking = $authManager->checkForLogIn($email);
+                if ($userForChecking) {
+                    $encryptedPassword = $userForChecking['password'];
 
-                    $request->redirectToRoute('blogIndex');
+                    if (password_verify($password,$encryptedPassword)){
+                        $_SESSION["userId"] = $userForChecking['id_user'];
+                        $_SESSION["userRole"] = $userForChecking['role'];
+
+                        $request->redirectToRoute('blogIndex');
+                    } else {
+                        $request->redirectToRoute('login', ['error' => 'Saisie incorrect vérifiez votre mail et votre mot de passe']);
+                    }
+
                 } else {
                 $request->redirectToRoute('login', ['error' => 'Saisie incorrect vérifiez votre mail et votre mot de passe']);
             }

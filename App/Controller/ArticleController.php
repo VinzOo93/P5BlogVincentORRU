@@ -59,16 +59,18 @@ class ArticleController
 
             if (!empty($tags) && strpos($tags, ';') === false) {
                 $request->redirectToRoute('newPost', ['error' => 'Veuillez remplir le champ tag comme suivi => bateau;chat;chocolat']);
-            } elseif (strlen($title) > 255 || strlen($tags) > 255 || strlen($_FILES['name']) > 255 || strlen($password) > 255) {
+            } elseif (strlen($title) > 255 || strlen($tags) > 255 || strlen($_FILES['image']['name']) > 255) {
                 $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
             } else {
                 if (!empty($title) && !empty($content)) {
 
                     $slug = strtolower(preg_replace('/\s+/', '-', $title));
                     $slugReady = $functionHelper->removeSpecialAndAccent($slug);
-
-                    $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
-
+                    if ($_FILES['image']['size'] != 0) {
+                        $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
+                    } else {
+                        $slugImageToSlug = false;
+                    }
                     if ($slugImageToSlug === false) {
                         $request->redirectToRoute('newPost', ['error' => "L'ajout d'image est obligatoire et doit au être format JPG"]);
                     } else {

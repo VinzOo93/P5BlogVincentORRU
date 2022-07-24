@@ -11,10 +11,10 @@ class AuthManager extends QueryManager
     private string $password = 'password';
 
 
-    public function checkForLogIn($email, $password)
+    public function checkForLogIn($email)
     {
 
-        return $this->fetchOneNoLeftJoin($this->user, "$this->id, $this->role" ,[$this->email => $email, $this->password => $password]);
+        return $this->fetchOneNoLeftJoin($this->user, "$this->id, $this->role, $this->password" ,[$this->email => $email]);
 
     }
 }

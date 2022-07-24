@@ -44,13 +44,12 @@ abstract class QueryManager
         return $queryStatement->fetch();
     }
 
-    public function fetchWithLeftJoin($selector, $table, array $leftjoins, array $columns, array $where, $orderBy = null)
+    public function fetchWithLeftJoin($selector, $table, array $leftJoins, array $columns, array $where, $orderBy = null)
     {
 
-        if (count($leftjoins) <= 3) {
-
-            if (!empty($leftQuery) && !empty($columns)){
-                foreach ($leftjoins as $key => $paramLeft) {
+        if (count($leftJoins) <= 3) {
+            if (!empty($leftJoins) && !empty($columns)){
+                foreach ($leftJoins as $key => $paramLeft) {
                     $column1 = array_search($key, $columns);
                     $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
                 }
@@ -73,7 +72,6 @@ abstract class QueryManager
             } else {
                 $whereQuery = '';
             }
-
             $sql = "SELECT $selector FROM $table $leftQuery $whereQuery $orderBy";
             $queryStatement = $this->db->connectToDB()->prepare($sql);
             $queryStatement->execute();

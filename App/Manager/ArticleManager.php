@@ -21,8 +21,7 @@ class ArticleManager extends QueryManager
     {
         $leftJoins = [$this->id => $this->user];
         $columns = [$this->author => $this->id];
-        $where[] = null;
-
+        $where = [];
         $orderBy = "ORDER BY $this->datePublished DESC";
 
         return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $where ,$orderBy);

@@ -12,8 +12,11 @@
                 <div class="media">
                     <div class="media-left">
                         <figure class="image is-48x48">
-                            <img src="{{ '../images/'~ article.picture }}" alt="Placeholder image">
-                        </figure>
+                            {% if article.picture is null %}
+                                <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+                            {% else %}
+                                <img src="{{ '../images/'~ article.picture }}" alt="Placeholder image">
+                            {% endif %}                        </figure>
                     </div>
                     <div class="media-content">
                         <p class="title is-4">{{ article.firstname }} {{ article.name }}</p>

@@ -51,7 +51,7 @@ class FunctionHelper
         $imageTmpName = $_FILES['image']['tmp_name'];
         $imgName = $_FILES['image']['name'];
 
-        if ($_FILES['image']['size'] != 0 && pathinfo($imgName, PATHINFO_EXTENSION) == 'jpg') {
+        if (pathinfo($imgName, PATHINFO_EXTENSION) == 'jpg') {
             $imgSlug = "$newDirPath/$imgName";
             mkdir($newDirPath);
             move_uploaded_file(
