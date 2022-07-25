@@ -89,9 +89,7 @@ abstract class QueryManager
                 $column1 = array_search($key, $columns);
                 $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
             }
-
             foreach ($where as $key => $paramWhere) {
-                $count++;
                 if (strpos($paramWhere, "'") !== false){
                     $paramWhere = str_replace("'","''", $paramWhere);
                 }
@@ -109,7 +107,7 @@ abstract class QueryManager
             $queryStatement = $this->db->connectToDB()->prepare($sql);
             $queryStatement->execute();
         }
-        return $queryStatement->fetchObject();
+        return $queryStatement->fetch();
     }
 
     public function fetchOneById($selector, $table, $id)
@@ -143,7 +141,9 @@ abstract class QueryManager
         if (!empty($params)) {
             $sqlSet = [];
             $this->getDatas($params);
-            $id = $this->values[0];
+            $id = $this->values[0]['id_article'];
+            $columnWhere = array_key_first($this->values[0]);
+
             foreach (array_slice($this->columns,1)  as $key => $column) {
                 $key++;
                 $value = $this->values[$key];
@@ -154,7 +154,7 @@ abstract class QueryManager
             $strSqlSet = implode(",", $sqlSet);
             try {
                 if (!empty($id)) {
-                    $sql = "UPDATE $table SET $strSqlSet WHERE id = $id;";
+                    $sql = "UPDATE $table SET $strSqlSet WHERE $columnWhere = $id;";
                     $queryStatement = $this->db->connectToDB()->prepare($sql);
                     $queryStatement->execute();
                 }

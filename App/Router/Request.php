@@ -10,7 +10,6 @@ class Request
     public function redirectToRoute($index, $param = null)
     {
         $route = new Route();
-
         $getRoute = $route->getRoutes();
 
         if ($getRoute != null) {

@@ -31,6 +31,10 @@ class FunctionHelper
 
     }
 
+    public function avoidSqlErrorForString($string){
+        return preg_replace("/'/", "''", $string);
+    }
+
     public function startSession()
     {
         if (session_status() == PHP_SESSION_NONE) {
@@ -53,7 +57,10 @@ class FunctionHelper
 
         if (pathinfo($imgName, PATHINFO_EXTENSION) == 'jpg') {
             $imgSlug = "$newDirPath/$imgName";
-            mkdir($newDirPath);
+
+            if (!file_exists($newDirPath)){
+                mkdir($newDirPath);
+            }
             move_uploaded_file(
                 $imageTmpName,
                 $imgSlug

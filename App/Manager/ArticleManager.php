@@ -13,24 +13,32 @@ class ArticleManager extends QueryManager
     private string $datePublished = 'date_published';
     private string $author = 'author';
     private string $user = 'user';
-    private string $id = 'id_user';
+    private string $idUser = 'id_user';
+    private string $idArticle = 'id_article';
     private string $all = '*';
 
 
     public function selectAllArticles()
     {
-        $leftJoins = [$this->id => $this->user];
-        $columns = [$this->author => $this->id];
+        $leftJoins = [$this->idUser => $this->user];
+        $columns = [$this->author => $this->idUser];
         $where = [];
         $orderBy = "ORDER BY $this->datePublished DESC";
 
         return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $where ,$orderBy);
     }
 
+    public function selectIdArticleBySlug($slug){
+
+        return $this->fetchOneNoLeftJoin($this->article, $this->idArticle, [$this->slug => $slug]);
+
+    }
+
+
     public function selectOneArticleByTitle($title)
     {
 
-        return $this->fetchOneNoLeftJoin($this->article,$this->title, [$this->title => $title]);
+        return $this->fetchOneNoLeftJoin($this->article,"$this->idArticle,$this->title", [$this->title => $title]);
 
     }
 
@@ -44,12 +52,12 @@ class ArticleManager extends QueryManager
         return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins ,$columns , $where, $orderBy);
     }
 
-    public function selectOneArticle($article)
+    public function selectOneArticle($slug)
     {
 
-        $leftJoins = [$this->id => $this->user];
-        $columns = [$this->author => $this->id];
-        $where = [$this->slug => $article];
+        $leftJoins = [$this->idUser => $this->user];
+        $columns = [$this->author => $this->idUser];
+        $where = [$this->slug => $slug];
 
         return $this->fetchOneWithLeftJoin($this->all,$this->article,$leftJoins, $columns, $where);
 
@@ -74,6 +82,22 @@ class ArticleManager extends QueryManager
                 $this->author => $author
             ]
          );
+    }
+
+    public function updateArticle($idArticle,$title,$slug, $tags, $image, $content){
+
+        $this->update(
+            $this->article,
+            [
+                $this->idArticle => $idArticle,
+                $this->title => $title,
+                $this->slug => $slug,
+                $this->tags => $tags,
+                $this->image => $image,
+                $this->content => $content,
+            ]
+        );
+
     }
 
     public  function deleteArticle($slug)
