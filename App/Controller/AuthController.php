@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\AuthManager;
 use App\Router\Request;
@@ -42,13 +43,19 @@ class AuthController
         }
     }
 
-    public static function logout(){
+    public static function logout()
+    {
         $request = new  Request();
-        if (isset($_SESSION)){
-            session_unset();
-            session_destroy();
-            session_write_close();
+        $functionHelper = new FunctionHelper();
+        $sessionOK = $functionHelper->mustBeAuthentificated();
+
+        if ($sessionOK) {
+            if (isset($_SESSION)) {
+                session_unset();
+                session_destroy();
+                session_write_close();
+            }
+            $request->redirectToRoute('blogIndex');
         }
-        $request->redirectToRoute('blogIndex');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Helper;
 
 use App\Manager\UserManager;
+use App\Router\Request;
 
 class FunctionHelper
 {
@@ -31,7 +32,8 @@ class FunctionHelper
 
     }
 
-    public function avoidSqlErrorForString($string){
+    public function avoidSqlErrorForString($string)
+    {
         return preg_replace("/'/", "''", $string);
     }
 
@@ -50,6 +52,17 @@ class FunctionHelper
         }
     }
 
+    public function mustBeAuthentificated()
+    {
+        $request = new Request();
+
+        if (empty($_SESSION)) {
+            $request->redirectToRoute('login');
+        } else {
+            return true;
+        }
+    }
+
     public function uploadImage($newDirPath)
     {
         $imageTmpName = $_FILES['image']['tmp_name'];
@@ -57,10 +70,10 @@ class FunctionHelper
 
 
         if (pathinfo($imgName, PATHINFO_EXTENSION) == 'jpg') {
-            $imgName = uniqid().'.jpg';
+            $imgName = uniqid() . '.jpg';
             $imgSlug = "$newDirPath/$imgName";
 
-            if (!file_exists($newDirPath)){
+            if (!file_exists($newDirPath)) {
                 mkdir($newDirPath);
             }
             move_uploaded_file(

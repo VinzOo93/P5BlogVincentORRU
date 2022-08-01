@@ -43,8 +43,8 @@ class ArticleManager extends QueryManager
     }
 
     public function selectArticleByUser($user){
-        $leftJoins = [];
-        $columns = [];
+        $leftJoins = [$this->idUser => $this->user];
+        $columns = [$this->author => $this->idUser];
         $where = [$this->author => $user['id_user']];
         $orderBy = "ORDER BY $this->datePublished DESC";
 
