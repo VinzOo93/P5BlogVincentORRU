@@ -12,15 +12,16 @@ class ArticleController
 {
     public static function showArticle($slug)
     {
+        var_dump($slug);
         $functionHelper = new FunctionHelper();
         $twig = new TwigHelper();
         $articleManager = new ArticleManager();
 
-        $article = $articleManager->selectOneArticle($slug);
+        $article = $articleManager->selectOneArticle($slug['slug']);
 
         $user = $functionHelper->checkActiveUserInSession();
 
-        $twig->loadTwig()->display('article/showArticle.html.twig', ['article' => $article, 'user' => $user]);
+        $twig->loadTwig()->display('article/showArticle.html.twig', ['message' => $slug,'article' => $article, 'user' => $user]);
     }
 
     public static function showFormArticle($message = null)

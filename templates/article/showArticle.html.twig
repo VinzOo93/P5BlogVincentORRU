@@ -6,6 +6,7 @@
     {% include "/blog/headerBlog.html.twig" %}
 {% endblock %}
 {% block content %}
+    {% include "/messageSuccess.html.twig" %}
     <div class="card">
         <div class="card">
             <div class="header">
@@ -16,7 +17,8 @@
                                 <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
                             {% else %}
                                 <img src="{{ '../images/'~ article.picture }}" alt="Placeholder image">
-                            {% endif %}                        </figure>
+                            {% endif %}
+                        </figure>
                     </div>
                     <div class="media-content">
                         <p class="title is-4">{{ article.firstname }} {{ article.name }}</p>
@@ -42,32 +44,66 @@
                         {% endfor %}
                     </div>
                 </div>
-
                 <div class="content">
                     {{ article.content }}
                     <br>
-                    <time datetime="2018-1-1">{{ article.date_published|date('d-m-Y H:i:s')}}</time>
+                    <time datetime="2018-1-1">{{ article.date_published|date('d-m-Y H:i:s') }}</time>
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <div class="columns is-mobile">
-                <div class="column is-11">
-                    <div class="field">
-                        <div class="control">
-                            <input class="input is-medium" type="text" placeholder="Add a comment . . .">
+        <article class="media">
+            <figure class="media-left">
+                <p class="image is-64x64">
+                    <img src="https://bulma.io/images/placeholders/128x128.png">
+                </p>
+            </figure>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+                        <br>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu
+                        pellentesque
+                        tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.
+                    </p>
+                </div>
+            </div>
+            <div class="media-right">
+                <button class="delete"></button>
+            </div>
+        </article>
+        {% if user is not null %}
+            <article class="media">
+                <figure class="image is-64x64">
+                    {% if user.picture is null %}
+                        <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+                    {% else %}
+                        <img src="{{ '../images/'~ user.picture }}" alt="Placeholder image">
+                    {% endif %}
+                    <p><strong>{{ user.firstname }} {{ user.name }}</strong></p>
+                </figure>
+                <form class="container" action="{{ '/addComment/' ~ article.slug }}" method="post"
+                      enctype="multipart/form-data">
+                    <div class="media-content">
+                        <div class="field">
+                            <p class="control">
+                                <label>
+                                <textarea class="textarea" name="content"
+                                          placeholder="ajouter un commentaire"></textarea>
+                                </label>
+                            </p>
                         </div>
+                        <nav class="level">
+                            <div class="level-left">
+                                <div class="level-item">
+                                    <button class="button is-info" type="submit">Envoyer</button>
+                                </div>
+                            </div>
+                        </nav>
                     </div>
-                </div>
-                <div class="column has-text-centered">
-                    <form action="/comment">
-                        <button class="button">
-                            <i class="material-icons">Commenter</i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                </form>
+            </article>
+        {% endif %}
     </div>
     {% include '/blog/paginateArticles.html.twig' %}
 {% endblock %}
