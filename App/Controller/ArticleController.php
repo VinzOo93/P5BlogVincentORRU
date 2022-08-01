@@ -165,7 +165,6 @@ class ArticleController
         $articleManager = new ArticleManager();
         $imageArray = $articleManager->selectImagePath($slug);
         $idArticle = $articleManager->selectIdArticleBySlug($slug);
-        $article = $articleManager->selectOneArticle($slug);
         $imagePath = $imageArray['image'];
         $functionHelper = new FunctionHelper;
         $request = new  Request();
@@ -191,7 +190,9 @@ class ArticleController
                         ]);
                 } else {
                     if (!empty($title) && !empty($content)) {
-
+                        if (empty($tags)){
+                            $tags = ' ';
+                        }
                         $slug = strtolower(preg_replace('/\s+/', '-', $title));
                         $slugReady = $functionHelper->removeSpecialAndAccent($slug);
                         $titleReady = $functionHelper->avoidSqlErrorForString($title);
@@ -223,13 +224,15 @@ class ArticleController
                             $slugImageToSlug[] = $imagePath;
                         }
                         $registredTitle = $articleManager->selectOneArticleByTitle($titleReady);
-                        if ($registredTitle['title'] === $titleReady && $idArticle[0] != $registredTitle['id_article']) {
+
+                        if (!empty($registredTitle) && $registredTitle['title'] === $titleReady && $idArticle['id_article'] != $registredTitle['id_article']) {
                             $request->redirectToRoute('showFormUpdateArticle',
                                 [
                                     'slug' => $slug,
                                     'error' => "Le titre : $title est déjà utilisé",
                                 ]);
                         } else {
+                            var_dump($tags);
                             $articleManager->updateArticle(
                                 $idArticle,
                                 $titleReady,

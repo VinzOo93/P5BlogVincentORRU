@@ -12,7 +12,8 @@
     "require": {
         "twig/twig": "^3.3",
         "ext-pdo": "*",
-      "ext-gd": "*"
+      "ext-gd": "*",
+      "ext-iconv": "*"
     },
     "autoload": {
         "psr-4" : {"App\\" : "App"}
