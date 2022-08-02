@@ -1,0 +1,28 @@
+<article class="media">
+    <figure class="media-left">
+        <p class="image is-64x64">
+            {% if comment.picture is null %}
+                <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+            {% else %}
+                <img src="{{ '../images/'~ comment.picture }}" alt="Placeholder image">
+            {% endif %}                </p>
+    </figure>
+    <div class="media-content">
+        <div class="content">
+            <p>
+                <strong>{{ comment.firstname }} {{ comment.name }} </strong> <small>{{ comment.date_added|date('d-m-Y H:i:s') }}</small>
+                <br>
+                {{ comment.content }}
+            </p>
+        </div>
+    </div>
+    {% if user.id_user == comment.author %}
+        <div class="media-right">
+            <form action="/deleteComment" method="post" enctype="multipart/form-data">
+                <input name="slug" type="hidden" value="{{ article.slug }}">
+                <input name="id" type="hidden" value="{{ comment.id_comment }}">
+                <button type="submit" class="delete" ></button>
+            </form>
+        </div>
+    {% endif %}
+</article>

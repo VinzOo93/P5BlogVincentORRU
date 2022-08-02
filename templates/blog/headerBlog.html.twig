@@ -24,7 +24,7 @@
                     <a class="navbar-item" href="/newPost">Publier</a>
                 </div>
                 <div class="navbar-item">
-                    <a class="navbar-content" href="{{ '/manageArticles/' ~ user.id }}">Utilisateur : {{ user.firstname }} {{ user.name }} - {{ user.role}} 🟢</a>
+                    <a class="navbar-content" href="/manageArticles">Utilisateur : {{ user.firstname }} {{ user.name }} - {{ user.role}} 🟢</a>
                 </div>
                 <div class="navbar-item">
                     <a class="nav-item" href="/logout">Déconnexion 🔴</a>
@@ -67,7 +67,7 @@
                             <a href="/newPost">Publier</a>
                         </li>
                         <li>
-                            <a href="{{ '/manageArticles/' ~ user.id }}">Utilisateur : {{ user.firstname }} {{ user.name }} - {{ user.role}} 🟢</a>
+                            <a href="/manageArticles">Utilisateur : {{ user.firstname }} {{ user.name }} - {{ user.role}} 🟢</a>
                         </li>
                         <li>
                             <a href="/logout">Déconnexion 🔴</a>

@@ -63,6 +63,27 @@ class FunctionHelper
         }
     }
 
+    public function checkAdminSession() {
+
+        $request = new Request();
+
+        if (!empty($_SESSION)) {
+            $role = $_SESSION['userRole'];
+            if ($role === 'admin') {
+            return true;
+            } elseif ($role === 'user') {
+                return false;
+            }
+            else {
+                session_unset();
+                session_destroy();
+                session_write_close();
+                $request->redirectToRoute('login');
+            }
+        }
+        return false;
+    }
+
     public function uploadImage($newDirPath)
     {
         $imageTmpName = $_FILES['image']['tmp_name'];

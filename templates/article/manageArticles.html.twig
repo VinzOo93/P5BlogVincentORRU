@@ -6,7 +6,9 @@
     {% include "blog/headerBlog.html.twig" %}
 {% endblock %}
 {% block content %}
+    {% include "/messageSuccess.html.twig" %}
     <div class="tableAdmin">
+        {% if articles > 0 %}
         {% for article in articles %}
             <div class="card grid-article">
                 <a href="{{ '/article/' ~ article.slug }}">
@@ -40,5 +42,11 @@
                 </a>
             </div>
         {% endfor %}
+        {% else %}
+        <p>l'utilisateur {{ user.firstname}} {{ user.name }} n'a pas publié d'article</p>
+        {% endif %}
     </div>
+    {% if user.role == 'admin' %}
+        {% include "/article/commentAdmin/commentAdminAction.html.twig" %}
+    {% endif %}
 {% endblock %}

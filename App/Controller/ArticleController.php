@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
+use App\Manager\CommentManager;
 use App\Router\Request;
 use Exception;
 
@@ -12,16 +13,28 @@ class ArticleController
 {
     public static function showArticle($slug)
     {
-        var_dump($slug);
         $functionHelper = new FunctionHelper();
         $twig = new TwigHelper();
         $articleManager = new ArticleManager();
+        $commentManager = new CommentManager();
 
-        $article = $articleManager->selectOneArticle($slug['slug']);
+        if (is_array($slug)){
+            $message = $slug;
+            $slug = $slug['slug'];
+        } else {
+            $message = null;
+        }
 
+        $article = $articleManager->selectOneArticle($slug);
+        $idArticle = $article['id_article'];
+        $comments = $commentManager->selectCommentInArticle($idArticle);
         $user = $functionHelper->checkActiveUserInSession();
-
-        $twig->loadTwig()->display('article/showArticle.html.twig', ['message' => $slug,'article' => $article, 'user' => $user]);
+        $twig->loadTwig()->display('article/showArticle.html.twig', [
+            'message' => $message,
+            'article' => $article,
+            'user' => $user,
+            'comments' => $comments
+        ]);
     }
 
     public static function showFormArticle($message = null)
@@ -30,7 +43,6 @@ class ArticleController
         $functionHelper = new FunctionHelper();
 
         $sessionOK = $functionHelper->mustBeAuthentificated();
-        var_dump($sessionOK);
         if ($sessionOK) {
             $title = "Publier un article";
 
@@ -66,23 +78,32 @@ class ArticleController
         }
     }
 
-    public static function manageArticles()
+    public static function manageArticles($message = null)
     {
         $twig = new TwigHelper();
         $functionHelper = new FunctionHelper();
         $articleManager = new ArticleManager();
-        $role = $_SESSION['userRole'];
+        $commentManager = new CommentManager();
+
         $sessionOK = $functionHelper->mustBeAuthentificated();
+        $role = $_SESSION['userRole'];
 
         if ($sessionOK) {
-
             $user = $functionHelper->checkActiveUserInSession();
             if ($role === 'admin') {
                 $articles = $articleManager->selectAllArticles();
             } else {
                 $articles = $articleManager->selectArticleByUser($user);
             }
-            $twig->loadTwig()->display('article/manageArticles.html.twig', ['user' => $user, 'articles' => $articles]);
+            $comments = $commentManager->selectCommentForAdmin();
+            $twig->loadTwig()->display('article/manageArticles.html.twig',
+                [
+                    'user' => $user,
+                    'articles' => $articles,
+                    'comments' => $comments,
+                    'message' => $message
+                ]
+            );
         }
     }
 
@@ -195,7 +216,6 @@ class ArticleController
         $request = new  Request();
         $pathUploadDir = "../public/images/";
         $sessionOK = $functionHelper->mustBeAuthentificated();
-
 
         try {
             if ($sessionOK) {

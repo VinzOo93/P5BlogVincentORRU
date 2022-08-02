@@ -1,0 +1,38 @@
+<h1 class="center-title blog-title">Administration des commentaires</h1>
+<table class="table center-element">
+    <thead>
+    <tr>
+        <th><abbr > id commentaire</abbr></th>
+        <th>titre article</th>
+        <th><abbr >date de publication</abbr></th>
+        <th><abbr >utilisateur</abbr></th>
+        <th><abbr >rôle</abbr></th>
+        <th><abbr >contenu</abbr></th>
+        <th><abbr >action</abbr></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for comment in comments %}
+    <tr>
+        <th>{{ comment.id_comment }}</th>
+        <td><a href="{{ '/article/' ~ comment.slug }}" >
+                {{ comment.title }}
+            </a> <strong></strong>
+        </td>
+        <td>{{ comment.date_added|date('d-m-Y H:i:s') }}</td>
+        <td>{{ comment.firstname }} {{ comment.name }}</td>
+        <td>{{ comment.role }}</td>
+        <td>{{ comment.content }}</td>
+        <td>
+            <div class="media-right">
+                <form action="/deleteComment" method="post" enctype="multipart/form-data">
+                    <input name="slug" type="hidden" value="{{ article.slug }}">
+                    <input name="id" type="hidden" value="{{ comment.id_comment }}">
+                    <button type="submit" class="delete" ></button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

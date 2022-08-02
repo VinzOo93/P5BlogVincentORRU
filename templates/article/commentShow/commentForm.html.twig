@@ -1,0 +1,30 @@
+<article class="media">
+    <figure class="image is-64x64">
+        {% if user.picture is null %}
+            <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+        {% else %}
+            <img src="{{ '../images/'~ user.picture }}" alt="Placeholder image">
+        {% endif %}
+        <p><strong>{{ user.firstname }} {{ user.name }}</strong></p>
+    </figure>
+    <form class="container" action="{{ '/addComment/' ~ article.slug }}" method="post"
+          enctype="multipart/form-data">
+        <div class="media-content">
+            <div class="field">
+                <p class="control">
+                    <label>
+                                <textarea class="textarea" name="content"
+                                          placeholder="ajouter un commentaire"></textarea>
+                    </label>
+                </p>
+            </div>
+            <nav class="level">
+                <div class="level-left">
+                    <div class="level-item">
+                        <button class="button is-info" type="submit">Envoyer</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </form>
+</article>

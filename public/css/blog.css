@@ -8,6 +8,20 @@
     font-size: 4rem!important;
 }
 
+.center-title {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5vh;
+}
+
+.center-element {
+    width: 70%;
+    border: 1px solid lightgray;
+    border-radius: 30px;
+    padding: 10px;
+    margin: auto;
+}
+
 .background-img-blog {
     background-image: linear-gradient(rgba(0, 0, 0, -5), rgba(0, 0, 0, -5)), url("../images/banner-3.jpeg");
     backdrop-filter: blur(1px)!important;
@@ -23,6 +37,7 @@
 .grid-article {
     margin-left: 2vw;
     margin-right: 2vw;
+    margin-bottom: 10vh;
 }
 
 @media screen and  (min-width: 768px) {

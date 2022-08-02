@@ -6,6 +6,7 @@ use App\Helper\FunctionHelper;
 use App\Manager\ArticleManager;
 use App\Manager\CommentManager;
 use App\Router\Request;
+use Exception;
 
 class CommentController
 {
@@ -35,5 +36,38 @@ class CommentController
             );
             $request->redirectToRoute('article', ['success' => "Votre commentaire a été ajouté !" , 'slug' => $slug]);
         }
+    }
+
+    public static function deleteComment($data) {
+        $commentManager = new CommentManager();
+        $request = new Request();
+        $functionHelper = new FunctionHelper();
+        $id = $data['id'];
+        $slug = $data['slug'];
+
+        $sessionOK = $functionHelper->mustBeAuthentificated();
+        try {
+            if ($sessionOK) {
+                $admin = $functionHelper->checkAdminSession();
+                if ($admin === false){
+                    $commentManager->dropComment($id);
+                    $request->redirectToRoute('article',
+                        [
+                            'success' => "Votre commentaire a été supprimé !" ,
+                            'slug' => $slug
+                        ]);
+                } else {
+                    $commentManager->dropComment($id);
+                    $request->redirectToRoute('manageArticles',
+                        [
+                            'success' => "Le commentaire a été supprimé !",
+                        ]
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            $request->redirectToRoute('blogIndex', ['error' => "Erreur lors de la suppression du commentaire $e"]);
+        }
+
     }
 }
