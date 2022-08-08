@@ -8,6 +8,11 @@ use App\Manager\ArticleManager;
 use App\Manager\CommentManager;
 use App\Router\Request;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class ArticleController
 {
@@ -18,7 +23,7 @@ class ArticleController
         $articleManager = new ArticleManager();
         $commentManager = new CommentManager();
 
-        if (is_array($slug)){
+        if (is_array($slug)) {
             $message = $slug;
             $slug = $slug['slug'];
         } else {
@@ -53,6 +58,11 @@ class ArticleController
 
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public static function showFormUpdateArticle($slug)
     {
         $twig = new TwigHelper();
@@ -78,24 +88,66 @@ class ArticleController
         }
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public static function manageArticles($message = null)
     {
         $twig = new TwigHelper();
         $functionHelper = new FunctionHelper();
         $articleManager = new ArticleManager();
         $commentManager = new CommentManager();
-
+        $limit = 3;
         $sessionOK = $functionHelper->mustBeAuthentificated();
         $role = $_SESSION['userRole'];
 
         if ($sessionOK) {
             $user = $functionHelper->checkActiveUserInSession();
             if ($role === 'admin') {
-                $articles = $articleManager->selectAllArticles();
+                if (
+                    isset(
+                        $_GET['loadArticle']) &&
+                    $_GET['loadArticle'] == '1'
+                ) {
+                    $offset = $_GET['offset'];
+                    $articles = $articleManager->selectAllArticles($limit, $offset);
+                    $json = new JsonResponse(
+                        [
+                            'content' => $twig->loadTwig()->render('article/admin/_list_articles.html.twig',
+                                [
+                                    'articles' => $articles
+                                ])
+                        ]
+                    );
+                    return $json->send();
+                } else {
+                    $articles = $articleManager->selectAllArticles($limit);
+                }
+
+                if (
+                    isset(
+                        $_GET['loadArticle']) &&
+                    $_GET['loadArticle'] == '1'
+                ) {
+                    $offset = $_GET['offset'];
+                    $articles = $articleManager->selectAllArticles($limit, $offset);
+                    $json = new JsonResponse(
+                        [
+                            'content' => $twig->loadTwig()->render('article/admin/_list_articles.html.twig',
+                                [
+                                    'articles' => $articles
+                                ])
+                        ]
+                    );
+                    return $json->send();
+                } else {
+                    $comments = $commentManager->selectCommentForAdmin();
+                }
             } else {
                 $articles = $articleManager->selectArticleByUser($user);
             }
-            $comments = $commentManager->selectCommentForAdmin();
             $twig->loadTwig()->display('article/manageArticles.html.twig',
                 [
                     'user' => $user,
@@ -131,8 +183,6 @@ class ArticleController
 
                         $slug = strtolower(preg_replace('/\s+/', '-', $title));
                         $slugReady = $functionHelper->removeSpecialAndAccent($slug);
-                        $titleReady = $functionHelper->avoidSqlErrorForString($title);
-                        $contentReady = $functionHelper->avoidSqlErrorForString($content);
 
                         if ($_FILES['image']['size'] != 0) {
                             $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
@@ -147,17 +197,17 @@ class ArticleController
                             $author = $_SESSION['userId'];
 
                             $articleManager = new ArticleManager();
-                            $registredTitle = $articleManager->selectOneArticleByTitle($titleReady);
+                            $registredTitle = $articleManager->selectOneArticleByTitle($title);
 
                             if ($registredTitle) {
                                 $request->redirectToRoute('newPost', ['error' => "Le titre : $title est déjà utilisé"]);
                             } else {
                                 $articleManager->insertArticle(
-                                    $titleReady,
+                                    $title,
                                     $slugReady,
                                     $tags,
                                     implode($slugImageToSlug),
-                                    $contentReady,
+                                    $content,
                                     $datePublished->format('Y-m-d H:i:sP'),
                                     $author
                                 );
@@ -211,6 +261,7 @@ class ArticleController
         $articleManager = new ArticleManager();
         $imageArray = $articleManager->selectImagePath($slug);
         $idArticle = $articleManager->selectIdArticleBySlug($slug);
+        $idArticle = $idArticle['id_article'];
         $imagePath = $imageArray['image'];
         $functionHelper = new FunctionHelper;
         $request = new  Request();
@@ -245,8 +296,6 @@ class ArticleController
                             }
                             $slug = strtolower(preg_replace('/\s+/', '-', $title));
                             $slugReady = $functionHelper->removeSpecialAndAccent($slug);
-                            $titleReady = $functionHelper->avoidSqlErrorForString($title);
-                            $contentReady = $functionHelper->avoidSqlErrorForString($content);
 
                             if ($_FILES['image']['size'] != 0) {
                                 $fileImage = "$pathUploadDir$imagePath";
@@ -273,9 +322,9 @@ class ArticleController
                             } else {
                                 $slugImageToSlug[] = $imagePath;
                             }
-                            $registredTitle = $articleManager->selectOneArticleByTitle($titleReady);
+                            $registredTitle = $articleManager->selectOneArticleByTitle($title);
 
-                            if (!empty($registredTitle) && $registredTitle['title'] === $titleReady && $idArticle['id_article'] != $registredTitle['id_article']) {
+                            if (!empty($registredTitle) && $registredTitle['title'] === $title && $idArticle['id_article'] != $registredTitle['id_article']) {
                                 $request->redirectToRoute('showFormUpdateArticle',
                                     [
                                         'slug' => $slug,
@@ -284,13 +333,13 @@ class ArticleController
                             } else {
                                 $articleManager->updateArticle(
                                     $idArticle,
-                                    $titleReady,
+                                    $title,
                                     $slugReady,
                                     $tags,
                                     implode($slugImageToSlug),
-                                    $contentReady
+                                    $content
                                 );
-                                $request->redirectToRoute('blogIndex', ['success' => "L'article '$titleReady' a bien été mis à jour"]);
+                                $request->redirectToRoute('blogIndex', ['success' => "L'article '$title' a bien été mis à jour"]);
                             }
                         }
                     }

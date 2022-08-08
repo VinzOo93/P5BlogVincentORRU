@@ -8,7 +8,6 @@ use App\Controller\BlogController;
 use App\Controller\CommentController;
 use App\Controller\HomeController;
 use App\Controller\UserController;
-use App\Manager\CommentManager;
 
 class Route
 {

@@ -38,8 +38,7 @@ abstract class QueryManager
             $queryStatement->execute();
 
         }
-
-        return $queryStatement->fetch();
+        return $queryStatement->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function fetchWithLeftJoin($selector, $table, array $leftJoins, array $columns, array $where, $orderBy = null)
@@ -90,14 +89,12 @@ abstract class QueryManager
                 $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
             }
             foreach ($where as $key => $paramWhere) {
-                if (strpos($paramWhere, "'") !== false){
-                    $paramWhere = str_replace("'","''", $paramWhere);
-                }
                 if ($count <= 1) {
                     $whereQuery[] = "$key = '$paramWhere'";
                 } else {
                     $whereQuery[] = "AND $key = '$paramWhere'";
                 }
+                $count++;
             }
 
             $leftQuery = implode(' ', $leftQuery);
@@ -107,7 +104,7 @@ abstract class QueryManager
             $queryStatement = $this->db->connectToDB()->prepare($sql);
             $queryStatement->execute();
         }
-        return $queryStatement->fetch();
+        return $queryStatement->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function fetchOneById($selector, $table, $id)
@@ -141,14 +138,14 @@ abstract class QueryManager
         if (!empty($params)) {
             $sqlSet = [];
             $this->getDatas($params);
-            $id = $this->values[0]['id_article'];
-            $columnWhere = array_key_first($this->values[0]);
+            $id = $this->values[0];
+            $columnWhere = $this->columns[0];
 
             foreach (array_slice($this->columns,1)  as $key => $column) {
                 $key++;
                 $value = $this->values[$key];
                 if (!empty($value)) {
-                    $sqlSet[] = "$column = '$value'";
+                    $sqlSet[] = "$column = $value";
                 }
             }
             $strSqlSet = implode(",", $sqlSet);
@@ -157,6 +154,7 @@ abstract class QueryManager
                     $sql = "UPDATE $table SET $strSqlSet WHERE $columnWhere = $id;";
                     $queryStatement = $this->db->connectToDB()->prepare($sql);
                     $queryStatement->execute();
+
                 }
             } catch (\Exception $exception){
                 echo 'erreur lors de la mise à jour';
@@ -173,6 +171,14 @@ abstract class QueryManager
         return $queryStatement->fetchObject();
     }
 
+    public function  countAll($table)
+    {
+        $sql = "SELECT COUNT(*) FROM $table";
+        $queryStatement = $this->db->connectToDB()->prepare($sql);
+        $queryStatement->execute();
+        return $queryStatement->fetch(\PDO::FETCH_NUM);
+    }
+
     private function getDatas($params)
     {
         $this->columns = [];
@@ -181,7 +187,7 @@ abstract class QueryManager
         foreach ($params as $key => $value) {
             $this->columns[] = $key;
             $this->datas[] = $this->param;
-            $this->values[] = $value;
+            $this->values[] = $this->db->connectToDB()->quote($value);
         }
     }
 }

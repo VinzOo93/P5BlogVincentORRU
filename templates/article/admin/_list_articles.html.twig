@@ -1,0 +1,43 @@
+<div class="tableAdmin grid-article">
+    {% for article in articles %}
+    <div class="card grid-article js-card-articles">
+        <a href="{{ '/article/' ~ article.slug }}">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img src="{{ '../images/'~ article.image }}" alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-48x48">
+                            {% if article.picture is null %}
+                                <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+                            {% else %}
+                                <img src="{{ '../images/'~ article.picture }}" alt="Placeholder image">
+                            {% endif %}                                </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-4">{{ article.firstname }} {{ article.name }}</p>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <h4 class="has-text-centered">{{ article.title }}</h4>
+                    <time datetime="2016-1-1">{{ article.date_published|date('d-m-Y H:i:s') }}</time>
+                    <a class="button" href="{{ '/showFormUpdateArticle/' ~ article.slug }}">Modifier</a>
+                    <a href="{{ '/deleteArticle/' ~ article.slug }}" class="button">❌</a>
+                </div>
+            </div>
+        </a>
+    </div>
+{% else %}
+    <div></div>
+    <div class="center-title">
+        <tr >
+            <td  colspan="5">Pas d'article trouvé</td>
+        </tr>
+    </div>
+    <div></div>
+{% endfor %}
+</div>

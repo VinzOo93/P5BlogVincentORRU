@@ -18,14 +18,19 @@ class ArticleManager extends QueryManager
     private string $all = '*';
 
 
-    public function selectAllArticles()
+    public function selectAllArticles($limit = 3, $offset = 0)
     {
         $leftJoins = [$this->idUser => $this->user];
         $columns = [$this->author => $this->idUser];
         $where = [];
-        $orderBy = "ORDER BY $this->datePublished DESC";
+        $orderBy = "ORDER BY $this->datePublished DESC LIMIT $limit OFFSET $offset";
 
         return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins, $columns, $where ,$orderBy);
+    }
+
+    public function countAllArticle()
+    {
+        return $this->countAll($this->article);
     }
 
     public function selectIdArticleBySlug($slug){

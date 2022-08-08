@@ -32,11 +32,6 @@ class FunctionHelper
 
     }
 
-    public function avoidSqlErrorForString($string)
-    {
-        return preg_replace("/'/", "''", $string);
-    }
-
     public function startSession()
     {
         if (session_status() == PHP_SESSION_NONE) {
