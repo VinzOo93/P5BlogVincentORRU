@@ -22,6 +22,19 @@
     margin: auto;
 }
 
+.center-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.center-in-line {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    vertical-align: middle !important;
+}
+
 .background-img-blog {
     background-image: linear-gradient(rgba(0, 0, 0, -5), rgba(0, 0, 0, -5)), url("../images/banner-3.jpeg");
     backdrop-filter: blur(1px)!important;
@@ -34,11 +47,16 @@
     grid-template-columns: repeat(3, 1fr);
 }
 
+.center-grid {
+    grid-column: 2 / 3;
+}
+
 .grid-article {
     margin-left: 2vw;
     margin-right: 2vw;
     margin-bottom: 10vh;
 }
+
 
 .img-centered {
     display: flex;

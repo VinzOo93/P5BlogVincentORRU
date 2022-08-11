@@ -1,0 +1,30 @@
+{% for comment in comments %}
+    <tr class="js-line-comments">
+        <th>{{ comment.id_comment }}</th>
+        <td><a href="{{ '/article/' ~ comment.slug }}">
+                {{ comment.title }}
+            </a> <strong></strong>
+        </td>
+        <td>{{ comment.date_added|date('d-m-Y H:i:s') }}</td>
+        <td>{{ comment.firstname }} {{ comment.name }}</td>
+        <td>{{ comment.role }}</td>
+        <td>{{ comment.content }}</td>
+        <td>
+            <div class="media-right">
+                <form action="/deleteComment" method="post" enctype="multipart/form-data">
+                    <input name="slug" type="hidden" value="{{ article.slug }}">
+                    <input name="id" type="hidden" value="{{ comment.id_comment }}">
+                    <button type="submit" class="delete"></button>
+                </form>
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tfoot>
+           <tr>
+               <td style="visibility: hidden" rowspan="1" class="has-text-centered" colspan="1">
+                   Pas de commentaire trouvé
+               </td>
+           </tr>
+    </tfoot>
+{% endfor %}

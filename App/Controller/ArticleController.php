@@ -99,7 +99,8 @@ class ArticleController
         $functionHelper = new FunctionHelper();
         $articleManager = new ArticleManager();
         $commentManager = new CommentManager();
-        $limit = 3;
+        $limitArticle = 3;
+        $limitComment = 5;
         $sessionOK = $functionHelper->mustBeAuthentificated();
         $role = $_SESSION['userRole'];
 
@@ -112,7 +113,7 @@ class ArticleController
                     $_GET['loadArticle'] == '1'
                 ) {
                     $offset = $_GET['offset'];
-                    $articles = $articleManager->selectAllArticles($limit, $offset);
+                    $articles = $articleManager->selectAllArticles($limitArticle, $offset);
                     $json = new JsonResponse(
                         [
                             'content' => $twig->loadTwig()->render('article/admin/_list_articles.html.twig',
@@ -123,27 +124,27 @@ class ArticleController
                     );
                     return $json->send();
                 } else {
-                    $articles = $articleManager->selectAllArticles($limit);
+                    $articles = $articleManager->selectAllArticles($limitArticle);
                 }
 
                 if (
                     isset(
-                        $_GET['loadArticle']) &&
-                    $_GET['loadArticle'] == '1'
+                        $_GET['loadComments']) &&
+                    $_GET['loadComments'] == '1'
                 ) {
                     $offset = $_GET['offset'];
-                    $articles = $articleManager->selectAllArticles($limit, $offset);
+                    $comments = $commentManager->selectCommentForAdmin($limitComment, $offset);
                     $json = new JsonResponse(
                         [
-                            'content' => $twig->loadTwig()->render('article/admin/_list_articles.html.twig',
+                            'content' => $twig->loadTwig()->render('article/admin/_list_comment.html.twig',
                                 [
-                                    'articles' => $articles
+                                    'comments' => $comments
                                 ])
                         ]
                     );
                     return $json->send();
                 } else {
-                    $comments = $commentManager->selectCommentForAdmin();
+                    $comments = $commentManager->selectCommentForAdmin($limitComment);
                 }
             } else {
                 $articles = $articleManager->selectArticleByUser($user);

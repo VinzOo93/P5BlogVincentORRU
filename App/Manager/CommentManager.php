@@ -52,7 +52,7 @@ class CommentManager extends QueryManager
         $this->delete($this->comment, $this->idComment, $idComment);
     }
 
-    public function selectCommentForAdmin(){
+    public function selectCommentForAdmin($limit, $offset = 0){
 
         $selector = "
             $this->comment.$this->idComment,
@@ -75,12 +75,16 @@ class CommentManager extends QueryManager
             ];
         $where = [];
 
+        $order = "ORDER BY $this->comment.$this->dateAdded DESC LIMIT $limit OFFSET $offset";
+
      return $this->fetchWithLeftJoin(
          $selector,
          $this->comment,
          $leftJoins,
          $columns,
-         $where);
+         $where,
+         $order
+     );
 
     }
 
