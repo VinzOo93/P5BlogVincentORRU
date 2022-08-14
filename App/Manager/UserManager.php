@@ -20,6 +20,30 @@ class UserManager extends QueryManager
         return $this->fetchAll($this->all, $this->user);
     }
 
+    public function selectUsersForAdmin($limit, $offset = 0)
+    {
+        $selector = "$this->all";
+        $leftJoins = [];
+        $columns = [];
+        $where = [];
+
+        $order = "ORDER BY $this->user.$this->id DESC LIMIT $limit OFFSET $offset";
+
+        return $this->fetchWithLeftJoin(
+            $selector,
+            $this->user,
+            $leftJoins,
+            $columns,
+            $where,
+            $order
+        );
+    }
+
+    public function selectPicturePath($id)
+    {
+        return$this->fetchOneNoLeftJoin($this->user, $this->picture, [$this->id => $id]);
+    }
+
     public function selectByMail($email)
     {
         return $this->fetchOneNoLeftJoin($this->user, $this->email, [$this->email => $email]);
@@ -42,7 +66,7 @@ class UserManager extends QueryManager
 
     public  function  deleteUser($id)
     {
-        $this->delete($this->user,$id);
+        $this->delete($this->user,$this->id,$id);
     }
 
 }

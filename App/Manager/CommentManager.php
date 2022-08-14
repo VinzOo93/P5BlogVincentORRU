@@ -52,7 +52,7 @@ class CommentManager extends QueryManager
         $this->delete($this->comment, $this->idComment, $idComment);
     }
 
-    public function selectCommentForAdmin($limit, $offset = 0){
+    public function selectCommentsForAdmin($limit, $offset = 0){
 
         $selector = "
             $this->comment.$this->idComment,

@@ -16,9 +16,11 @@
     </div>
     {% if user.role == 'admin' %}
         {% include "/article/admin/commentAdminAction.html.twig" %}
+        {% include "/article/admin/userAdminAction.html.twig" %}
     {% endif %}
 {% endblock %}
 {% block javascripts %}
     <script type="module" src="/js/show-more-articles.js"></script>
     <script type="module" src="/js/show-more-comments.js"></script>
+    <script type="module" src="/js/show-more-users.js"></script>
 {% endblock %}

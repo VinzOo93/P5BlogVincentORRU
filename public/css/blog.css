@@ -86,6 +86,12 @@
 justify-content: center;
 }
 
+.center-footer {
+    position: absolute;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
 @media screen and  (min-width: 768px) {
     .tableAdmin {
         display: grid;

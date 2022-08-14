@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
+use App\Manager\ArticleManager;
 use App\Manager\UserManager;
 use App\Router\Request;
 use Exception;
@@ -37,7 +38,7 @@ class UserController
             if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
                 if (strlen($password) < 6) {
                     $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
-                } elseif ( strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['image']['name']) > 255 ||strlen($password) > 255){
+                } elseif (strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['image']['name']) > 255 || strlen($password) > 255) {
                     $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
                 } else {
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -48,22 +49,22 @@ class UserController
                         } else {
                             if ($_FILES['image']['size'] != 0) {
                                 $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
-                                 if ($slugImageToSlug === false ) {
+                                if ($slugImageToSlug === false) {
                                     $request->redirectToRoute('register', ['error' => "L'image doit au être format JPG"]);
                                 }
                                 $slugImageToSlug = implode($slugImageToSlug);
                             } else {
                                 $slugImageToSlug = null;
                             }
-                                $userManager->insertUser(
-                                    $name,
-                                    $firstName,
-                                    $email,
-                                    $role,
-                                    $slugImageToSlug,
-                                    password_hash($password, PASSWORD_DEFAULT)
-                                );
-                                $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
+                            $userManager->insertUser(
+                                $name,
+                                $firstName,
+                                $email,
+                                $role,
+                                $slugImageToSlug,
+                                password_hash($password, PASSWORD_DEFAULT)
+                            );
+                            $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
                         }
                     } else {
                         $request->redirectToRoute('register', ['error' => "Le champ email ne correspond pas à la synthaxe d'une adresse mail"]);
@@ -108,16 +109,47 @@ class UserController
         }
     }
 
-    public static function deleteUser($id)
+    public static function deleteUser($data)
     {
         $userManager = new UserManager();
         $request = new  Request();
+        $functionHelper = new FunctionHelper();
+        $articleManager = new ArticleManager();
+        $id = $data['id_user'];
+        $user = $userManager->selectUser($id);
+        $email = $user['email'];
+        $pathUploadDir = '../public/images/';
+
+        $sessionOK = $functionHelper->mustBeAuthentificated();
         try {
-            $userManager->deleteUser($id);
-            $request->redirectToRoute('home');
-            echo 'utilisateur supprimé <br>';
+            if ($sessionOK) {
+                $admin = $functionHelper->checkAdminSession();
+                if ($admin === true) {
+
+                    $imageArrayUser = $userManager->selectPicturePath($id);
+
+                    if ($imageArrayUser) {
+                        $functionHelper->deleteImage($imageArrayUser['picture'], $pathUploadDir);
+                    }
+
+                    $userArticles = $articleManager->selectArticleByUser($user, 0);
+                    if ($userArticles) {
+                        foreach ($userArticles as $article) {
+                            if ($article) {
+                            $functionHelper->deleteImage($article['image'], $pathUploadDir);
+                            }
+                        }
+                    }
+
+                    $userManager->deleteUser($id);
+                    $request->redirectToRoute('manageArticles',
+                        [
+                            'success' => "l'utilisateur : '$email' a été supprimé !",
+                        ]);
+                }
+            }
         } catch (Exception $e) {
-            echo 'erreur lors de la suppression' . $e;
+            $request->redirectToRoute('blogIndex', ['error' => "Erreur lors de la suppression du commentaire $e"]);
         }
     }
 }

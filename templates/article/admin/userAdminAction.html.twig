@@ -1,0 +1,20 @@
+<h1 class="center-title blog-title">Administration des utilisateurs</h1>
+<table class="table center-element">
+    <thead>
+    <tr>
+        <th><abbr> id utilisateur</abbr></th>
+        <th>nom</th>
+        <th><abbr>email</abbr></th>
+        <th><abbr>rôle</abbr></th>
+        <th><abbr>image</abbr></th>
+        <th><abbr>action</abbr></th>
+    </tr>
+    </thead>
+    {% include "/article/admin/_list_users.html.twig" %}
+</table>
+<table class="table center-element content-span-users"></table>
+<div class="img-centered">
+    <button id="show-more-users" class="show-more">✚</button>
+    <div class="clock-loader"></div>
+    <span class="loader-users"><span class="loader-inner"></span></span>
+</div>

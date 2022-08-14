@@ -6,10 +6,10 @@ use App\Helper\FunctionHelper;
 use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
 use App\Manager\CommentManager;
+use App\Manager\UserManager;
 use App\Router\Request;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -99,8 +99,10 @@ class ArticleController
         $functionHelper = new FunctionHelper();
         $articleManager = new ArticleManager();
         $commentManager = new CommentManager();
+        $userManager = new UserManager();
         $limitArticle = 3;
         $limitComment = 5;
+        $limitUsers = 5;
         $sessionOK = $functionHelper->mustBeAuthentificated();
         $role = $_SESSION['userRole'];
 
@@ -133,10 +135,10 @@ class ArticleController
                     $_GET['loadComments'] == '1'
                 ) {
                     $offset = $_GET['offset'];
-                    $comments = $commentManager->selectCommentForAdmin($limitComment, $offset);
+                    $comments = $commentManager->selectCommentsForAdmin($limitComment, $offset);
                     $json = new JsonResponse(
                         [
-                            'content' => $twig->loadTwig()->render('article/admin/_list_comment.html.twig',
+                            'content' => $twig->loadTwig()->render('article/admin/_list_comments.html.twig',
                                 [
                                     'comments' => $comments
                                 ])
@@ -144,16 +146,57 @@ class ArticleController
                     );
                     return $json->send();
                 } else {
-                    $comments = $commentManager->selectCommentForAdmin($limitComment);
+                    $comments = $commentManager->selectCommentsForAdmin($limitComment);
+                }
+                if (
+                    isset(
+                        $_GET['loadUsers']) &&
+                    $_GET['loadUsers'] == '1'
+                ) {
+                    $offset = $_GET['offset'];
+                    $users = $userManager->selectUsersForAdmin($limitUsers, $offset);
+                    $json = new JsonResponse(
+                        [
+                            'content' => $twig->loadTwig()->render('article/admin/_list_users.html.twig',
+                                [
+                                    'users' => $users
+                                ])
+                        ]
+                    );
+                    return $json->send();
+                } else {
+                    $users = $userManager->selectUsersForAdmin($limitUsers);
                 }
             } else {
-                $articles = $articleManager->selectArticleByUser($user);
+                if (
+                    isset(
+                        $_GET['loadArticle']) &&
+                    $_GET['loadArticle'] == '1'
+                ) {
+                    $offset = $_GET['offset'];
+                    $articles = $articleManager->selectArticleByUser($user, $limitArticle, $offset);
+                    $json = new JsonResponse(
+                        [
+                            'content' => $twig->loadTwig()->render('article/admin/_list_articles.html.twig',
+                                [
+                                    'articles' => $articles
+                                ])
+                        ]
+                    );
+                    return $json->send();
+
+                } else {
+                    $articles = $articleManager->selectArticleByUser($user, $limitArticle);
+                }
+                $comments = null;
+                $users = null;
             }
             $twig->loadTwig()->display('article/manageArticles.html.twig',
                 [
                     'user' => $user,
                     'articles' => $articles,
                     'comments' => $comments,
+                    'users' => $users,
                     'message' => $message
                 ]
             );
@@ -238,15 +281,8 @@ class ArticleController
             if ($sessionOK) {
                 $imageArray = $articleManager->selectImagePath($slug);
 
-                if ($imageArray != null) {
-                    $imagePath = $imageArray['image'];
-                    $pathFile = "$pathUploadDir$imagePath";
-                    if (file_exists($pathFile)) {
-                        $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
-                        $folderPath = "$pathUploadDir$folder";
-                        unlink($pathFile);
-                        rmdir($folderPath);
-                    }
+                if ($imageArray) {
+                    $functionHelper->deleteImage($imageArray['image'], $pathUploadDir);
                 }
 
                 $articleManager->deleteArticle($slug);

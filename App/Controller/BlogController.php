@@ -19,7 +19,7 @@ class BlogController
         $countArticles = $countArticles[0];
 
         if (!empty($_GET['page'])){
-            $offset = ($limit * ($_GET['page'] - 1));
+            $offset = $limit * ($_GET['page'] - 1);
         }
         $articles = $articleManager->selectAllArticles($limit, $offset);
         $user = $functionHelper->checkActiveUserInSession();

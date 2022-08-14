@@ -62,7 +62,7 @@ class FunctionHelper
 
         $request = new Request();
 
-        if (!empty($_SESSION)) {
+        if (isset($_SESSION) && !empty($_SESSION)) {
             $role = $_SESSION['userRole'];
             if ($role === 'admin') {
             return true;
@@ -104,5 +104,21 @@ class FunctionHelper
 
         return $slugImageToSlug;
 
+    }
+
+    public function deleteImage($imagePath, $pathUploadDir)
+    {
+        if ($imagePath != null) {
+            $pathFile = "$pathUploadDir$imagePath";
+            if (file_exists($pathFile)) {
+                $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
+                $folderPath = "$pathUploadDir$folder";
+                array_map('unlink', glob("$folderPath/*.*"));
+                rmdir($folderPath);
+            return  true;
+            }
+        } else {
+            return false;
+        }
     }
 }

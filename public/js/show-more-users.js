@@ -1,23 +1,20 @@
 window.addEventListener("load", init);
 
 function init() {
-    let btn = document.querySelector("#show-more-comments");
-    let loader = document.querySelector(".loader-comments");
-    let span = document.querySelector(".content-span-comments");
+    let btn = document.querySelector("#show-more-users");
+    let loader = document.querySelector(".loader-users");
+    let span = document.querySelector(".content-span-users");
 
     if (btn) {
         btn.addEventListener("click", function (e) {
             btn.style.visibility = "hidden";
             loader.style.visibility = "visible";
-            let comments = document.querySelectorAll(".js-line-comments");
-            let lastComment = comments.length;
+            let users = document.querySelectorAll(".js-line-users");
+            let lastUser = users.length;
             const Params = new URLSearchParams();
-
-            Params.append("offset", lastComment);
+            Params.append("offset", lastUser);
             const Url = new URL(window.location.origin);
-
-            fetch(Url.origin + "/manageArticles" + "?" + Params.toString() + "&loadComments=1", {
-
+            fetch(Url.origin + "/manageArticles" + "?" + Params.toString() + "&loadUsers=1", {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 }
@@ -29,7 +26,8 @@ function init() {
                         span.appendChild(content);
                         btn.style.visibility = "visible";
                         loader.style.visibility = "hidden";
-                        if (content.innerText === "Pas de commentaire trouvé.") {
+
+                        if (content.innerText === "Pas d'utilisateur trouvé.") {
                             btn.style.visibility = "hidden";
                         }
                     }

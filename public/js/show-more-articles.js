@@ -12,9 +12,9 @@ function init() {
         let lastArticles = articles.length;
         const Params = new URLSearchParams();
         Params.append("offset", lastArticles);
-        const Url = new URL(window.location.href);
+        const Url = new URL(window.location.origin);
 
-        fetch(Url.pathname + "?" + Params.toString() + "&loadArticle=1", {
+        fetch(Url.origin + "/manageArticles" + "?" + Params.toString() + "&loadArticle=1", {
 
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
@@ -28,7 +28,7 @@ function init() {
                     btn.style.visibility = "visible";
                     loader.style.visibility = "hidden";
 
-                    if (content.innerText === "Pas d'article trouvé") {
+                    if (content.innerText === "Pas d'article trouvé.") {
                         btn.style.visibility = "hidden";
                     }
                 }

@@ -1,0 +1,33 @@
+{% for user in users %}
+    <tr class="js-line-users">
+        <th>{{ user.id_user }}</th>
+        <td>{{ user.firstname}} {{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+            <figure class="image is-48x48">
+            {% if user.picture is null %}
+                <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
+            {% else %}
+                <img src="{{ '../images/'~ user.picture }}" alt="Placeholder image">
+            {% endif %}
+            </figure>
+        </td>
+        <td>
+            <div class="media-right">
+                <form action="/deleteUser" method="post" enctype="multipart/form-data">
+                    <input name="id_user" type="hidden" value="{{ user.id_user }}">
+                    <button type="submit" class="delete"></button>
+                </form>
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tfoot>
+    <tr>
+        <td  rowspan="1" class="center-footer" colspan="1">
+            Pas d'utilisateur trouvé.
+        </td>
+    </tr>
+    </tfoot>
+{% endfor %}

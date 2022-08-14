@@ -47,12 +47,17 @@ class ArticleManager extends QueryManager
 
     }
 
-    public function selectArticleByUser($user){
+    public function selectArticleByUser($user, $limit = 3, $offset = 0){
+
         $leftJoins = [$this->idUser => $this->user];
         $columns = [$this->author => $this->idUser];
         $where = [$this->author => $user['id_user']];
-        $orderBy = "ORDER BY $this->datePublished DESC";
 
+        if ($limit != 0) {
+            $orderBy = "ORDER BY $this->datePublished DESC LIMIT $limit OFFSET $offset";
+        } else {
+            $orderBy = null;
+        }
 
         return $this->fetchWithLeftJoin($this->all, $this->article, $leftJoins ,$columns , $where, $orderBy);
     }

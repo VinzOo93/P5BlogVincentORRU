@@ -1,12 +1,15 @@
+{% if countArticles > limit %}
 <nav class="pagination fa-align-center" role="navigation" aria-label="pagination">
     <ul class="pagination-list">
         {% for page in 1..countArticles/limit %}
         <li>
-            <a class="pagination-link" aria-label="Goto page 1" href="{{ 'blog?page=' ~ page }}" }>{{ page }}</a>
+            <a class="pagination-link" aria-label="Goto page 1" href="{{ 'blog?page=' ~ page }}" %}>{{ page }}</a>
         </li>
         <li>
             <span class="pagination-ellipsis">|</span>
         </li>
         {% endfor %}
+        {
     </ul>
 </nav>
+{% endif %}

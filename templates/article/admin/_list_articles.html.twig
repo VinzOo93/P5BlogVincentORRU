@@ -15,7 +15,8 @@
                                 <img src="../images/users/uploaded/anonymous.jpg" alt="Placeholder image">
                             {% else %}
                                 <img src="{{ '../images/'~ article.picture }}" alt="Placeholder image">
-                            {% endif %}                                </figure>
+                            {% endif %}
+                        </figure>
                     </div>
                     <div class="media-content">
                         <p class="title is-4">{{ article.firstname }} {{ article.name }}</p>
@@ -34,7 +35,7 @@
 {% else %}
     <div class="center-title center-grid">
         <tr >
-            <td  colspan="1">Pas d'article trouvé</td>
+            <td  colspan="1">Pas d'article trouvé.</td>
         </tr>
     </div>
 {% endfor %}
