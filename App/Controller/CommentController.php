@@ -6,6 +6,7 @@ use App\Helper\FunctionHelper;
 use App\Manager\ArticleManager;
 use App\Manager\CommentManager;
 use App\Router\Request;
+use App\Validator\CommentCreationValidator;
 use Exception;
 
 class CommentController
@@ -15,7 +16,9 @@ class CommentController
         $functionHelper = new FunctionHelper();
         $commentManager = new CommentManager();
         $articleManager = new ArticleManager();
+        $commentValidator = new CommentCreationValidator();
         $request = new Request();
+
 
         $sessionOK = $functionHelper->mustBeAuthentificated();
 
@@ -28,13 +31,18 @@ class CommentController
             $article = $articleManager->selectOneArticle($slug);
             $idArticle = $article['id_article'];
 
-            $commentManager->insertComment(
-                $idUser,
-                $content,
-                $dateAdded->format('Y-m-d H:i:sP'),
-                $idArticle
-            );
-            $request->redirectToRoute('article', ['success' => "Votre commentaire a été ajouté !" , 'slug' => $slug]);
+            $commentCreation = ['content' => $content];
+
+
+            if ($commentValidator->validate($commentCreation, $slug)){
+                $commentManager->insertComment(
+                    $idUser,
+                    $content,
+                    $dateAdded->format('Y-m-d H:i:sP'),
+                    $idArticle
+                );
+                $request->redirectToRoute('article', ['success' => "Votre commentaire a été ajouté !" , 'slug' => $slug]);
+            }
         }
     }
 
