@@ -7,6 +7,7 @@ use App\Helper\TwigHelper;
 use App\Manager\ArticleManager;
 use App\Manager\UserManager;
 use App\Router\Request;
+use App\Validator\UserCreationValidator;
 use Exception;
 
 
@@ -23,6 +24,7 @@ class UserController
     {
         $request = new  Request();
         $functionHelper = new FunctionHelper();
+        $userValidator = new UserCreationValidator();
         $pathUploadDir = '../public/images/users/';
 
         $uniq = uniqid();
@@ -35,45 +37,34 @@ class UserController
             $password = $data['password'];
             $newDirPath = "$pathUploadDir$uniq";
 
-            if (!empty($name) && !empty($firstName) && !empty($email) && !empty($password)) {
-                if (strlen($password) < 6) {
-                    $request->redirectToRoute('register', ['error' => "Le mot de passe doit être composé de 6 caractères minimum"]);
-                } elseif (strlen($name) > 255 || strlen($firstName) > 255 || strlen($email) > 255 || strlen($_FILES['image']['name']) > 255 || strlen($password) > 255) {
-                    $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
-                } else {
-                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $userManager = new UserManager();
-                        $registredUserMail = $userManager->selectByMail($email);
-                        if ($registredUserMail) {
-                            $request->redirectToRoute('register', ['error' => "L'identfiant mail est déja utilisé ! "]);
-                        } else {
-                            if ($_FILES['image']['size'] != 0) {
-                                $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
-                                if ($slugImageToSlug === false) {
-                                    $request->redirectToRoute('register', ['error' => "L'image doit au être format JPG"]);
-                                }
-                                $slugImageToSlug = implode($slugImageToSlug);
-                            } else {
-                                $slugImageToSlug = null;
-                            }
-                            $userManager->insertUser(
-                                $name,
-                                $firstName,
-                                $email,
-                                $role,
-                                $slugImageToSlug,
-                                password_hash($password, PASSWORD_DEFAULT)
-                            );
-                            $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
-                        }
-                    } else {
-                        $request->redirectToRoute('register', ['error' => "Le champ email ne correspond pas à la synthaxe d'une adresse mail"]);
-                    }
-                }
+            if ($_FILES['image']['size'] != 0) {
+                $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
+                $slugImageToSlug = implode($slugImageToSlug);
             } else {
-                $request->redirectToRoute('register', ['error' => "Merci de remplir l'intégralité des champs du formulaire !"]);
+                $slugImageToSlug = null;
             }
-        } catch (Exception $e) {
+            $userCreation = [
+                'name' => $name,
+                'firstname' => $firstName,
+                'email' => $email,
+                'password' => $password,
+                'image' => $slugImageToSlug
+            ];
+
+            if ($userValidator->validate($userCreation)) {
+                $userManager = new UserManager();
+                $userManager->insertUser(
+                    $name,
+                    $firstName,
+                    $email,
+                    $role,
+                    $slugImageToSlug,
+                    password_hash($password, PASSWORD_DEFAULT)
+                );
+                $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
+            }
+        } catch
+        (Exception $e) {
             $request->redirectToRoute('register', ['error' => "Erreur Lors de l'enregistrement ! $e"]);
         }
     }
@@ -136,7 +127,7 @@ class UserController
                     if ($userArticles) {
                         foreach ($userArticles as $article) {
                             if ($article) {
-                            $functionHelper->deleteImage($article['image'], $pathUploadDir);
+                                $functionHelper->deleteImage($article['image'], $pathUploadDir);
                             }
                         }
                     }

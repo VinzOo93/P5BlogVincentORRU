@@ -101,9 +101,7 @@ class FunctionHelper
         } else {
             return false;
         }
-
         return $slugImageToSlug;
-
     }
 
     public function deleteImage($imagePath, $pathUploadDir)

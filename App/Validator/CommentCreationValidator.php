@@ -25,11 +25,11 @@ class CommentCreationValidator
                             }
                        }
                 }
-                return true;
             }
+            return true;
 
         } catch (\Exception $exception) {
-           return $this->redirecToArticle("Erreur lors de la mis à jour de l'article $exception", $slug);
+           return $this->redirecToArticle("Erreur lors de l'ajout du commentaire $exception", $slug);
         }
 
         return true;
