@@ -30,7 +30,8 @@ abstract class QueryManager
     {
         if (isset($params)) {
             foreach ($params as $key => $value) {
-                $whereQuery[] = "$key = '$value'";
+                $value = $this->db->connectToDB()->quote($value);
+                $whereQuery[] = "$key = $value";
             }
             $whereStr = implode(" AND ", $whereQuery);
 

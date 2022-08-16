@@ -40,7 +40,7 @@ class UserCreationValidator
                                 return $this->redirectToAddUserForm("L'identfiant email est déja utilisé !");
                             }
                         case 'jpg':
-                            if ($userCreation[$property] === $value && $property === 'image'){
+                            if ($userCreation[$property] === $value && $property === 'picture'){
                                 return $this->redirectToAddUserForm("L'image doit au être format JPG");
                             }
                     }
@@ -51,9 +51,6 @@ class UserCreationValidator
         } catch (\Exception $exception) {
             return $this->redirectToAddUserForm("Erreur lors de l'ajoute de l'utilisateur $exception");
         }
-
-        return true;
-
     }
 
     private function setUpRules(): array
@@ -82,7 +79,7 @@ class UserCreationValidator
                     'max' => $this->max,
                     'min' => $this->passwordLimit
                 ],
-            'image' =>
+            'picture' =>
                 [
                     'jpg' => false,
                     'max' => $this->max

@@ -17,23 +17,20 @@ class CommentCreationValidator
                     switch ($ru) {
                         case 'notBlank':
                             if ($commentCreation[$property] === '') {
-                            return $this->redirecToArticle("Un commentaire ne peut pas être publié vide !", $slug);
+                                return $this->redirecToArticle("Un commentaire ne peut pas être publié vide !", $slug);
                             }
                         case 'min':
                             if (strlen($commentCreation[$property]) < $value) {
-                            return    $this->redirecToArticle("La taille d'un commentaire doit être supérieur à $this->limitStr caractères", $slug);
+                                return $this->redirecToArticle("La taille d'un commentaire doit être supérieur à $this->limitStr caractères", $slug);
                             }
-                       }
+                    }
                 }
             }
             return true;
 
         } catch (\Exception $exception) {
-           return $this->redirecToArticle("Erreur lors de l'ajout du commentaire $exception", $slug);
+            return $this->redirecToArticle("Erreur lors de l'ajout du commentaire $exception", $slug);
         }
-
-        return true;
-
     }
 
     private function setUpRules(): array

@@ -26,7 +26,6 @@ class UserController
         $functionHelper = new FunctionHelper();
         $userValidator = new UserCreationValidator();
         $pathUploadDir = '../public/images/users/';
-
         $uniq = uniqid();
 
         try {
@@ -48,7 +47,7 @@ class UserController
                 'firstname' => $firstName,
                 'email' => $email,
                 'password' => $password,
-                'image' => $slugImageToSlug
+                'picture' => $slugImageToSlug
             ];
 
             if ($userValidator->validate($userCreation)) {

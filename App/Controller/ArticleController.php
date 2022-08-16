@@ -8,6 +8,7 @@ use App\Manager\ArticleManager;
 use App\Manager\CommentManager;
 use App\Manager\UserManager;
 use App\Router\Request;
+use App\Validator\ArticleCreationValidator;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Error\LoaderError;
@@ -206,6 +207,7 @@ class ArticleController
     public static function addArticle(array $data = [])
     {
         $functionHelper = new FunctionHelper;
+        $articleValidator = new ArticleCreationValidator();
         $request = new  Request();
         $pathUploadDir = '../public/images/articles/';
         $uniq = uniqid();
@@ -218,49 +220,38 @@ class ArticleController
                 $tags = trim($data['tag']);
                 $content = $data['content'];
 
-                if (!empty($tags) && strpos($tags, ';') === false) {
-                    $request->redirectToRoute('newPost', ['error' => 'Veuillez remplir le champ tag comme suivi => bateau;chat;chocolat']);
-                } elseif (strlen($title) > 255 || strlen($tags) > 255 || strlen($_FILES['image']['name']) > 255) {
-                    $request->redirectToRoute('register', ['error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères"]);
+                if ($_FILES['image']['size'] != 0) {
+                    $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
+                    $slugImageToSlug = implode($slugImageToSlug);
                 } else {
-                    if (!empty($title) && !empty($content)) {
+                    $slugImageToSlug = false;
+                }
 
-                        $slug = strtolower(preg_replace('/\s+/', '-', $title));
-                        $slugReady = $functionHelper->removeSpecialAndAccent($slug);
+                $articleCreation = [
+                    'title' => $title,
+                    'tags' => $tags,
+                    'content' => $content,
+                    'image' => $slugImageToSlug
+                ];
 
-                        if ($_FILES['image']['size'] != 0) {
-                            $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
-                        } else {
-                            $slugImageToSlug = false;
-                        }
-                        if ($slugImageToSlug === false) {
-                            $request->redirectToRoute('newPost', ['error' => "L'ajout d'image est obligatoire et doit au être format JPG"]);
-                        } else {
-                            $datePublished = new \DateTime('NOW');
-                            $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
-                            $author = $_SESSION['userId'];
+                if ($articleValidator->validate($articleCreation)) {
 
-                            $articleManager = new ArticleManager();
-                            $registredTitle = $articleManager->selectOneArticleByTitle($title);
-
-                            if ($registredTitle) {
-                                $request->redirectToRoute('newPost', ['error' => "Le titre : $title est déjà utilisé"]);
-                            } else {
-                                $articleManager->insertArticle(
-                                    $title,
-                                    $slugReady,
-                                    $tags,
-                                    implode($slugImageToSlug),
-                                    $content,
-                                    $datePublished->format('Y-m-d H:i:sP'),
-                                    $author
-                                );
-                                $request->redirectToRoute('blogIndex', ['success' => "L'article : '$title' a été publié !"]);
-                            }
-                        }
-                    } else {
-                        $request->redirectToRoute('newPost', ['error' => 'Un article doit comporter obligatoirement un titre et un contenu']);
-                    }
+                    $slug = strtolower(preg_replace('/\s+/', '-', $title));
+                    $slugReady = $functionHelper->removeSpecialAndAccent($slug);
+                    $datePublished = new \DateTime('NOW');
+                    $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
+                    $author = $_SESSION['userId'];
+                    $articleManager = new ArticleManager();
+                    $articleManager->insertArticle(
+                        $title,
+                        $slugReady,
+                        $tags,
+                        $slugImageToSlug,
+                        $content,
+                        $datePublished->format('Y-m-d H:i:sP'),
+                        $author
+                    );
+                    $request->redirectToRoute('blogIndex', ['success' => "L'article : '$title' a été publié !"]);
                 }
             }
         } catch
