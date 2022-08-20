@@ -9,6 +9,7 @@ use App\Manager\CommentManager;
 use App\Manager\UserManager;
 use App\Router\Request;
 use App\Validator\ArticleCreationValidator;
+use App\Validator\ArticleUpdateValidator;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\Error\LoaderError;
@@ -76,6 +77,7 @@ class ArticleController
             $user = $functionHelper->checkActiveUserInSession();
 
             if (is_array($slug)) {
+
                 $article = $articleManager->selectOneArticle($slug['slug']);
                 $message = ['error' => $slug['error']];
             } else {
@@ -222,7 +224,6 @@ class ArticleController
                     'tags' => $data['tags'],
                     'content' => $data['content'],
                 ];
-
                 if ($_FILES['image']['size'] != 0) {
                     $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
                     $slugImageToSlug = implode($slugImageToSlug);
@@ -284,94 +285,54 @@ class ArticleController
 
     public static function updateArticle($data, $slug)
     {
+        $articleValidator = new ArticleUpdateValidator();
+        $functionHelper = new FunctionHelper;
+        $request = new  Request();
         $articleManager = new ArticleManager();
         $imageArray = $articleManager->selectImagePath($slug);
         $idArticle = $articleManager->selectIdArticleBySlug($slug);
         $idArticle = $idArticle['id_article'];
         $imagePath = $imageArray['image'];
-        $functionHelper = new FunctionHelper;
-        $request = new  Request();
         $pathUploadDir = "../public/images/";
         $sessionOK = $functionHelper->mustBeAuthentificated();
 
         try {
             if ($sessionOK) {
-
-                $title = $data['title'];
-                $tags = trim($data['tag']);
-                $content = $data['content'];
-
-
-                if (!empty($tags) && strpos($tags, ';') === false) {
-                    $request->redirectToRoute('showFormUpdateArticle',
-                        [
-                            'slug' => $slug,
-                            'error' => 'Veuillez remplir le champ tag comme suivi => bateau;chat;chocolat',
-                        ]);
-                } else {
-                    if (strlen($title) > 255 || strlen($tags) > 255 || strlen($_FILES['image']['name']) > 255) {
-                        $request->redirectToRoute('showFormUpdateArticle',
-                            [
-                                'slug' => $slug,
-                                'error' => "Le champ et le nom de l'image doit être inférieur à 255 caractères",
-                            ]);
-                    } else {
-                        if (!empty($title) && !empty($content)) {
-                            if (empty($tags)) {
-                                $tags = ' ';
-                            }
-                            $slug = strtolower(preg_replace('/\s+/', '-', $title));
-                            $slugReady = $functionHelper->removeSpecialAndAccent($slug);
-
-                            if ($_FILES['image']['size'] != 0) {
-                                $fileImage = "$pathUploadDir$imagePath";
-                                if (file_exists($fileImage)) {
-                                    $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
-                                    $folderPath = "$pathUploadDir$folder";
-                                    unlink($fileImage);
-                                    $slugImageToSlug = $functionHelper->uploadImage($folderPath);
-                                    if ($slugImageToSlug === false) {
-                                        $request->redirectToRoute('showFormUpdateArticle',
-                                            [
-                                                'slug' => $slug,
-                                                'error' => "L'ajout d'image doit être au format JPG",
-                                            ]);
-                                    }
-                                } else {
-                                    $request->redirectToRoute('showFormUpdateArticle',
-                                        [
-                                            'slug' => $slug,
-                                            'error' => "L'article enregistré ne possède pas d'image",
-                                        ]);
-                                }
-
-                            } else {
-                                $slugImageToSlug[] = $imagePath;
-                            }
-                            $registredTitle = $articleManager->selectOneArticleByTitle($title);
-
-                            if (!empty($registredTitle) && $registredTitle['title'] === $title && $idArticle['id_article'] != $registredTitle['id_article']) {
-                                $request->redirectToRoute('showFormUpdateArticle',
-                                    [
-                                        'slug' => $slug,
-                                        'error' => "Le titre : $title est déjà utilisé",
-                                    ]);
-                            } else {
-                                $articleManager->updateArticle(
-                                    $idArticle,
-                                    $title,
-                                    $slugReady,
-                                    $tags,
-                                    implode($slugImageToSlug),
-                                    $content
-                                );
-                                $request->redirectToRoute('blogIndex', ['success' => "L'article '$title' a bien été mis à jour"]);
-                            }
-                        }
+                $articleUpdate = [
+                    'title' => $data['title'],
+                    'tags' => trim($data['tags']),
+                    'content' => $data['content']
+                ];
+                if ($_FILES['image']['size'] != 0) {
+                    $fileImage = "$pathUploadDir$imagePath";
+                    if (file_exists($fileImage)) {
+                        $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
+                        $folderPath = "$pathUploadDir$folder";
+                        unlink($fileImage);
+                        $slugImageToSlug = $functionHelper->uploadImage($folderPath);
+                        $slugImageToSlug = implode($slugImageToSlug);
+                        $articleUpdate = array_merge($articleUpdate, ['image' => $slugImageToSlug]);
                     }
+                } else {
+                    $articleUpdate = array_merge($articleUpdate, ['image' => $imagePath]);
+                }
+                if ($articleValidator->validate($articleUpdate, $slug)) {
+                    $slug = strtolower(preg_replace('/\s+/', '-', $articleUpdate['title']));
+                    $slugReady = $functionHelper->removeSpecialAndAccent($slug);
+                    $articleManager->updateArticle(
+                        $idArticle,
+                        $articleUpdate['title'],
+                        $slugReady,
+                        $articleUpdate['tags'],
+                        $articleUpdate['image'],
+                        $articleUpdate['content']
+                    );
+                    $title = $articleUpdate['title'];
+                    $request->redirectToRoute('blogIndex', ['success' => "L'article '$title' a bien été mis à jour"]);
                 }
             }
-        } catch (Exception $e) {
+        } catch
+        (Exception $e) {
             $request->redirectToRoute('showFormUpdateArticle', ['error' => "Erreur lors de la mis à jour de l'article $e"]);
         }
     }

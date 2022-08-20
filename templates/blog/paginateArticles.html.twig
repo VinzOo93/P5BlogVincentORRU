@@ -1,17 +1,20 @@
 {% if countArticles > limit %}
-    <nav class="pagination fa-align-center" role="navigation" aria-label="pagination">
-        <ul class="pagination-list">
-            {% set pageLength = countArticles/limit %}
-            {% for key,page in 1..pageLength|round %}
-                {% if key != 0 %}
-                <li>
-                    <span class="pagination-ellipsis">|</span>
-                </li>
-                {% endif %}
-                <li>
-                    <a class="pagination-link" aria-label="Goto page 1" href="{{ 'blog?page=' ~ page }}">{{ page }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </nav>
+    {% set pageLength = countArticles/limit %}
+    {% if pageLength|round(0, 'ceil') >= 2 %}
+        <nav class="pagination fa-align-center" role="navigation" aria-label="pagination">
+            <ul class="pagination-list">
+                {% for key,page in 1..pageLength|round(0, 'ceil') %}
+                    {% if key != 0 %}
+                        <li>
+                            <span class="pagination-ellipsis">|</span>
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a class="pagination-link" aria-label="Goto page 1"
+                           href="{{ '/blog?page=' ~ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
 {% endif %}

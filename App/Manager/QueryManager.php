@@ -56,10 +56,11 @@ abstract class QueryManager
                 $leftQuery[] = "LEFT JOIN $paramLeft ON $table.$column1 = $paramLeft.$key";
             }
             foreach ($where as $key => $paramWhere) {
+                $paramWhere = $this->db->connectToDB()->quote($paramWhere);
                 if ($count <= 1) {
-                    $whereQuery[] = "$key = '$paramWhere'";
+                    $whereQuery[] = "$key = $paramWhere";
                 } else {
-                    $whereQuery[] = "AND $key = '$paramWhere'";
+                    $whereQuery[] = "AND $key = $paramWhere";
                 }
                 $count++;
             }
@@ -154,13 +155,13 @@ abstract class QueryManager
             $this->getDatas($params);
             $id = $this->values[0];
             $columnWhere = $this->columns[0];
-
             foreach (array_slice($this->columns, 1) as $key => $column) {
                 $key++;
                 $value = $this->values[$key];
-                if (!empty($value)) {
-                    $sqlSet[] = "$column = $value";
+                if (is_null($value)){
+                    $value = 'NULL';
                 }
+                $sqlSet[] = "$column = $value";
             }
             $strSqlSet = implode(",", $sqlSet);
             try {
@@ -199,7 +200,7 @@ abstract class QueryManager
         $this->values = [];
         foreach ($params as $key => $value) {
             $this->columns[] = $key;
-            if ($value != null){
+            if ($value != null) {
                 $this->values[] = $this->db->connectToDB()->quote($value);
             } else {
                 $this->values[] = null;
