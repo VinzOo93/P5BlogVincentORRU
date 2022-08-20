@@ -23,7 +23,6 @@ class BlogController
         }
         $articles = $articleManager->selectAllArticles($limit, $offset);
         $user = $functionHelper->checkActiveUserInSession();
-        var_dump($countArticles);
         $twig->loadTwig()->display('blog/indexBlog.html.twig',
             [
                 'articles' => $articles,

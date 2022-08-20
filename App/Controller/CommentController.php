@@ -25,19 +25,18 @@ class CommentController
         if ($sessionOK) {
             $user = $functionHelper->checkActiveUserInSession();
             $idUser = $user['id_user'];
-            $content = $data['content'];
             $dateAdded = new \DateTime('NOW');
             $dateAdded = $dateAdded->setTimezone(new \DateTimeZone('Europe/Paris'));
             $article = $articleManager->selectOneArticle($slug);
             $idArticle = $article['id_article'];
 
-            $commentCreation = ['content' => $content];
+            $commentCreation = ['content' => $data['content']];
 
 
             if ($commentValidator->validate($commentCreation, $slug)){
                 $commentManager->insertComment(
                     $idUser,
-                    $content,
+                    $commentCreation['content'],
                     $dateAdded->format('Y-m-d H:i:sP'),
                     $idArticle
                 );

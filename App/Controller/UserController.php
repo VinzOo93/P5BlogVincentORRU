@@ -29,39 +29,38 @@ class UserController
         $uniq = uniqid();
 
         try {
-            $name = $data['name'];
-            $firstName = $data['firstName'];
-            $email = $data['email'];
             $role = 'user';
-            $password = $data['password'];
             $newDirPath = "$pathUploadDir$uniq";
+
+            $userCreation = [
+                'name' => $data['name'],
+                'firstname' => $data['firstName'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ];
 
             if ($_FILES['image']['size'] != 0) {
                 $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
                 $slugImageToSlug = implode($slugImageToSlug);
+                $userCreation = array_merge($userCreation, ['picture' => $slugImageToSlug]);
             } else {
-                $slugImageToSlug = null;
+                $userCreation = array_merge($userCreation, ['picture' => null]);
             }
-            $userCreation = [
-                'name' => $name,
-                'firstname' => $firstName,
-                'email' => $email,
-                'password' => $password,
-                'picture' => $slugImageToSlug
-            ];
 
             if ($userValidator->validate($userCreation)) {
                 $userManager = new UserManager();
                 $userManager->insertUser(
-                    $name,
-                    $firstName,
-                    $email,
+                    $userCreation['name'],
+                    $userCreation['firstname'],
+                    $userCreation['email'],
                     $role,
-                    $slugImageToSlug,
-                    password_hash($password, PASSWORD_DEFAULT)
+                    $userCreation['picture'],
+                    password_hash($userCreation['password'], PASSWORD_DEFAULT)
                 );
-                $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
             }
+
+            $email = $userCreation['email'];
+            $request->redirectToRoute('blogIndex', ['success' => "Bravo ! L'utilisateur : $email a bien été ajouté ! Vous pouvez vous connecter"]);
         } catch
         (Exception $e) {
             $request->redirectToRoute('register', ['error' => "Erreur Lors de l'enregistrement ! $e"]);

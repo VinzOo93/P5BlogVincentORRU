@@ -216,41 +216,39 @@ class ArticleController
         try {
             if ($sessionOK) {
                 $newDirPath = "$pathUploadDir$uniq";
-                $title = $data['title'];
-                $tags = trim($data['tag']);
-                $content = $data['content'];
+
+                $articleCreation = [
+                    'title' => $data['title'],
+                    'tags' => $data['tags'],
+                    'content' => $data['content'],
+                ];
 
                 if ($_FILES['image']['size'] != 0) {
                     $slugImageToSlug = $functionHelper->uploadImage($newDirPath);
                     $slugImageToSlug = implode($slugImageToSlug);
+                    $articleCreation = array_merge($articleCreation, ['image' => $slugImageToSlug]);
                 } else {
-                    $slugImageToSlug = false;
+                    $articleCreation = array_merge($articleCreation, ['image' => false]);
                 }
-
-                $articleCreation = [
-                    'title' => $title,
-                    'tags' => $tags,
-                    'content' => $content,
-                    'image' => $slugImageToSlug
-                ];
 
                 if ($articleValidator->validate($articleCreation)) {
 
-                    $slug = strtolower(preg_replace('/\s+/', '-', $title));
+                    $slug = strtolower(preg_replace('/\s+/', '-', $articleCreation['title']));
                     $slugReady = $functionHelper->removeSpecialAndAccent($slug);
                     $datePublished = new \DateTime('NOW');
                     $datePublished = $datePublished->setTimezone(new \DateTimeZone('Europe/Paris'));
                     $author = $_SESSION['userId'];
                     $articleManager = new ArticleManager();
                     $articleManager->insertArticle(
-                        $title,
+                        $articleCreation['title'],
                         $slugReady,
-                        $tags,
-                        $slugImageToSlug,
-                        $content,
+                        $articleCreation['tags'],
+                        $articleCreation['image'],
+                        $articleCreation['content'],
                         $datePublished->format('Y-m-d H:i:sP'),
                         $author
                     );
+                    $title = $data['title'];
                     $request->redirectToRoute('blogIndex', ['success' => "L'article : '$title' a été publié !"]);
                 }
             }

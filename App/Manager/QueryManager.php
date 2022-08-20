@@ -199,7 +199,11 @@ abstract class QueryManager
         $this->values = [];
         foreach ($params as $key => $value) {
             $this->columns[] = $key;
-            $this->values[] = $this->db->connectToDB()->quote($value);
+            if ($value != null){
+                $this->values[] = $this->db->connectToDB()->quote($value);
+            } else {
+                $this->values[] = null;
+            }
         }
     }
 }
