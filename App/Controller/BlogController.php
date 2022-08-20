@@ -18,7 +18,7 @@ class BlogController
         $countArticles = $articleManager->countAllArticle();
         $countArticles = $countArticles[0];
 
-        if (!empty($_GET['page'])){
+        if (!empty($_GET['page'])) {
             $offset = ($limit * ($_GET['page'] - 1));
         }
         $articles = $articleManager->selectAllArticles($limit, $offset);

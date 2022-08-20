@@ -51,7 +51,7 @@ class ArticleCreationValidator
             return true;
 
         } catch (\Exception $exception) {
-            return $this->redirectToAddArticleForm("Erreur lors de l'ajoute de l'utilisateur $exception");
+            return $this->redirectToAddArticleForm("Erreur lors de l'ajout de l'article $exception");
         }
     }
 

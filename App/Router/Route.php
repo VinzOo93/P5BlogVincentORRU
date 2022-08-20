@@ -16,6 +16,7 @@ class Route
     {
         return [
             'home' => ['', HomeController::class, 'showHome', 'GET'],
+            'contactByMail' => ['contactByMail', HomeController::class, 'contactByMail','POST'],
             'blogIndex' => ['blog', BlogController::class, 'showBlog', 'GET'],
             'register' => ['register', UserController::class, 'showFormAddUser', 'GET'],
             'login' => ['login', AuthController::class, 'showFormLogIn', 'GET'],

@@ -56,7 +56,7 @@ class ArticleUpdateValidator
             return true;
 
         } catch (\Exception $exception) {
-            return $this->redirectToUpdateArticleForm("Erreur lors de l'ajoute de l'utilisateur $exception", $slug);
+            return $this->redirectToUpdateArticleForm("Erreur lors de la mise à jour de l'article $exception", $slug);
         }
     }
 
