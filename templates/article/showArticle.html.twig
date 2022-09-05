@@ -53,7 +53,9 @@
             </div>
         </div>
         {% for comment in comments %}
+            {% if comment.is_visible != 0 %}
             {% include "/article/commentShow/commentList.html.twig" %}
+            {% endif %}
         {% endfor %}
         {% if user is not null %}
             {% include "/article/commentShow/commentForm.html.twig" %}

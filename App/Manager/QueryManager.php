@@ -167,9 +167,9 @@ abstract class QueryManager
             try {
                 if (!empty($id)) {
                     $sql = "UPDATE $table SET $strSqlSet WHERE $columnWhere = $id;";
+                    var_dump($sql);
                     $queryStatement = $this->db->connectToDB()->prepare($sql);
                     $queryStatement->execute();
-
                 }
             } catch (\Exception $exception) {
                 echo 'erreur lors de la mise à jour';
@@ -203,7 +203,11 @@ abstract class QueryManager
             if ($value != null) {
                 $this->values[] = $this->db->connectToDB()->quote($value);
             } else {
-                $this->values[] = null;
+                if (is_bool($value)){
+                    $this->values[] = (int)$value ;
+                } else {
+                    $this->values[] = null;
+                }
             }
         }
     }

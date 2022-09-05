@@ -34,6 +34,7 @@ class Route
             'updateUser' => ['user/updateUser/{id_user}', UserController::class, 'updateUser', 'POST'],
             'deleteUser' => ['user/deleteUser/{id_user}', UserController::class, 'deleteUser', 'POST'],
             'addComment' => ['addComment/{slug}', CommentController::class, 'addComment', 'POST'],
+            'checkVisibility' => ['checkVisibility', CommentController::class, 'checkVisibility', 'POST'],
             'deleteComment' => ['deleteComment', CommentController::class, 'deleteComment', 'POST']
         ];
     }

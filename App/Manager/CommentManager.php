@@ -18,10 +18,12 @@ class CommentManager extends QueryManager
     private string $idUser = 'id_user';
     private string $idArticle = 'id_article';
     private string $idComment = 'id_comment';
+    private string $isVisible = 'is_visible';
     private string $all = '*';
 
 
-    public function insertComment($author, $content, $dateAdded, $article){
+    public function insertComment($author, $content, $dateAdded, $article)
+    {
         $this->insert(
             $this->comment, [
                 $this->author => $author,
@@ -32,7 +34,8 @@ class CommentManager extends QueryManager
         );
     }
 
-    public function selectCommentInArticle($idArticle){
+    public function selectCommentInArticle($idArticle)
+    {
 
         $leftJoins = [$this->idUser => $this->user];
         $columns = [$this->author => $this->idUser];
@@ -47,17 +50,28 @@ class CommentManager extends QueryManager
         );
     }
 
+    public function changeVisibility($idComment, $isVisible)
+    {
+        $this->update($this->comment,
+            [
+                $this->idComment => $idComment,
+                $this->isVisible => !$isVisible
+            ] );
+    }
+
     public function dropComment($idComment)
     {
         $this->delete($this->comment, $this->idComment, $idComment);
     }
 
-    public function selectCommentsForAdmin($limit, $offset = 0){
+    public function selectCommentsForAdmin($limit, $offset = 0)
+    {
 
         $selector = "
             $this->comment.$this->idComment,
             $this->comment.$this->dateAdded,
             $this->comment.$this->content,
+            $this->comment.$this->isVisible,
             $this->article.$this->slug,
             $this->article.$this->title,
             $this->user.$this->firstName,

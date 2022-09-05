@@ -33,19 +33,56 @@ class CommentController
             $commentCreation = ['content' => $data['content']];
 
 
-            if ($commentValidator->validate($commentCreation, $slug)){
+            if ($commentValidator->validate($commentCreation, $slug))
+            {
                 $commentManager->insertComment(
                     $idUser,
-                    $commentCreation['content'],
+                    $comment = $commentCreation['content'],
                     $dateAdded->format('Y-m-d H:i:sP'),
                     $idArticle
                 );
-                $request->redirectToRoute('article', ['success' => "Votre commentaire a été ajouté !" , 'slug' => $slug]);
+                $request->redirectToRoute('article', ['success' => "Votre commentaire '$comment' a bien été soumis pour validation !" , 'slug' => $slug]);
             }
         }
     }
 
-    public static function deleteComment($data) {
+    public static function checkVisibility($data)
+    {
+        $commentManager = new CommentManager();
+        $functionHelper = new FunctionHelper();
+        $request = new Request();
+var_dump($data);
+        $idComment = $data['comment'];
+        $isVisible = $data['visible'];
+        $sessionOK = $functionHelper->mustBeAuthentificated();
+
+        try {
+            if ($sessionOK) {
+                $admin = $functionHelper->checkAdminSession();
+                if ($admin === false) {
+                    $request->redirectToRoute('blogIndex',
+                        [
+                        'error' => "Vous n'avez pas de droits administrateur"
+                        ]);
+                } else {
+                    $commentManager->changeVisibility($idComment, $isVisible);
+                    $request->redirectToRoute('manageArticles',
+                        [
+                            'success' => "La visibilité du commentaire a été modifiée avec succès",
+                        ]);
+                }
+            }
+
+        } catch (Exception $e) {
+            $request->redirectToRoute('blogIndex',
+                [
+                'error' => "Erreur lors de la suppression du commentaire $e"
+                ]);
+        }
+    }
+
+    public static function deleteComment($data)
+    {
         $commentManager = new CommentManager();
         $request = new Request();
         $functionHelper = new FunctionHelper();
@@ -56,7 +93,7 @@ class CommentController
         try {
             if ($sessionOK) {
                 $admin = $functionHelper->checkAdminSession();
-                if ($admin === false){
+                if ($admin === false) {
                     $commentManager->dropComment($id);
                     $request->redirectToRoute('article',
                         [
@@ -75,6 +112,5 @@ class CommentController
         } catch (Exception $e) {
             $request->redirectToRoute('blogIndex', ['error' => "Erreur lors de la suppression du commentaire $e"]);
         }
-
     }
 }

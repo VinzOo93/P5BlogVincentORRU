@@ -31,7 +31,6 @@ class ArticleController
         } else {
             $message = null;
         }
-
         $article = $articleManager->selectOneArticle($slug);
         $idArticle = $article['id_article'];
         $comments = $commentManager->selectCommentInArticle($idArticle);

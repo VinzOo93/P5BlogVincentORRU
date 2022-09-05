@@ -2,5 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="PROJECT" libraries="{2828f7885a, aos, api, bulma, font-awesome, jquery-3.6.0, notify, pro}" />
+    <includedPredefinedLibrary name="Node.js Core" />
   </component>
 </project>

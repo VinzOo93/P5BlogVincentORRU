@@ -1,15 +1,14 @@
 {% for comment in comments %}
+    {% if comment.is_visible != false %}
+        {% set checked = 'checked' %}
+    {% else %}
+        {% set checked = '' %}
+    {% endif %}
     <tr class="js-line-comments">
-        <th>{{ comment.id_comment }}</th>
-        <td><a href="{{ '/article/' ~ comment.slug }}">
-                {{ comment.title }}
-            </a> <strong></strong>
-        </td>
-        <td>{{ comment.date_added|date('d-m-Y H:i:s') }}</td>
-        <td>{{ comment.firstname }} {{ comment.name }}</td>
-        <td>{{ comment.role }}</td>
-        <td>{{ comment.content }}</td>
-        <td>
+        <td><strong>
+                <a href="{{ '/article/' ~ comment.slug }}">{{ comment.title }}</a>
+            </strong>
+            <p>le : {{ comment.date_added|date('d-m-Y H:i:s') }}</p>
             <div class="media-right">
                 <form action="/deleteComment" method="post" enctype="multipart/form-data">
                     <input name="slug" type="hidden" value="{{ article.slug }}">
@@ -18,13 +17,27 @@
                 </form>
             </div>
         </td>
+        <td>
+            <form action="/checkVisibility" method="post" enctype="multipart/form-data">
+                <label class="switch">
+                    <input name="visible" type="hidden" value="{{ comment.is_visible }}">
+                    <input name="comment" type="hidden" value="{{ comment.id_comment }}">
+                    <input type="checkbox" onChange="this.form.submit()"{{ checked }} >
+                    <span class="slider round"></span>
+                </label>
+            </form>
+        </td>
+        <td><strong>{{ comment.firstname }} {{ comment.name }}</strong> : {{ comment.content }} </td>
+        <td>
+
+        </td>
     </tr>
 {% else %}
     <tfoot>
-           <tr>
-               <td  rowspan="1" class="center-footer" colspan="1">
-                   Pas de commentaire trouvé.
-               </td>
-           </tr>
+    <tr>
+        <td rowspan="1" class="center-footer" colspan="1">
+            Pas de commentaire trouvé.
+        </td>
+    </tr>
     </tfoot>
 {% endfor %}
