@@ -47,9 +47,8 @@ class AuthController
     {
         $request = new  Request();
         $functionHelper = new FunctionHelper();
-        $sessionOK = $functionHelper->mustBeAuthentificated();
 
-        if ($sessionOK) {
+        if ($functionHelper->mustBeAuthentificated()) {
             if (isset($_SESSION)) {
                 session_unset();
                 session_destroy();

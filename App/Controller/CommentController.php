@@ -19,10 +19,7 @@ class CommentController
         $commentValidator = new CommentCreationValidator();
         $request = new Request();
 
-
-        $sessionOK = $functionHelper->mustBeAuthentificated();
-
-        if ($sessionOK) {
+        if ($functionHelper->mustBeAuthentificated()) {
             $user = $functionHelper->checkActiveUserInSession();
             $idUser = $user['id_user'];
             $dateAdded = new \DateTime('NOW');
@@ -53,10 +50,8 @@ class CommentController
         $request = new Request();
         $idComment = $data['comment'];
         $isVisible = $data['visible'];
-        $sessionOK = $functionHelper->mustBeAuthentificated();
-
         try {
-            if ($sessionOK) {
+            if ($functionHelper->mustBeAuthentificated()) {
                 $admin = $functionHelper->checkAdminSession();
                 if ($admin === false) {
                     $request->redirectToRoute('blogIndex',
@@ -89,9 +84,8 @@ class CommentController
         $slug = $data['slug'];
         $author = $data['author'];
 
-        $sessionOK = $functionHelper->mustBeAuthentificated();
         try {
-            if ($sessionOK) {
+            if ($functionHelper->mustBeAuthentificated()) {
                 $admin = $functionHelper->checkAdminSession();
                 if ($admin === false) {
                     if ($functionHelper->checkActiveUserInSession() === $author) {

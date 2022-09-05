@@ -24,13 +24,13 @@ class ArticleController
         $twig = new TwigHelper();
         $articleManager = new ArticleManager();
         $commentManager = new CommentManager();
+        $message = null;
 
         if (is_array($slug)) {
             $message = $slug;
             $slug = $slug['slug'];
-        } else {
-            $message = null;
         }
+
         $article = $articleManager->selectOneArticle($slug);
         $idArticle = $article['id_article'];
         $comments = $commentManager->selectCommentInArticle($idArticle);
@@ -48,8 +48,7 @@ class ArticleController
         $twig = new TwigHelper();
         $functionHelper = new FunctionHelper();
 
-        $sessionOK = $functionHelper->mustBeAuthentificated();
-        if ($sessionOK) {
+        if ($functionHelper->mustBeAuthentificated()) {
             $title = "Publier un article";
 
             $user = $functionHelper->checkActiveUserInSession();
@@ -69,10 +68,9 @@ class ArticleController
         $twig = new TwigHelper();
         $functionHelper = new FunctionHelper();
         $articleManager = new ArticleManager();
+        $message = null;
 
-        $sessionOK = $functionHelper->mustBeAuthentificated();
-
-        if ($sessionOK) {
+        if ($functionHelper->mustBeAuthentificated()) {
             $user = $functionHelper->checkActiveUserInSession();
 
             if (is_array($slug)) {
@@ -81,7 +79,6 @@ class ArticleController
                 $message = ['error' => $slug['error']];
             } else {
                 $article = $articleManager->selectOneArticle($slug);
-                $message = null;
             }
             $articleTitle = $article["title"];
             $title = "Mettre à jour l'article : $articleTitle";
@@ -105,10 +102,9 @@ class ArticleController
         $limitArticle = 3;
         $limitComment = 5;
         $limitUsers = 5;
-        $sessionOK = $functionHelper->mustBeAuthentificated();
         $role = $_SESSION['userRole'];
 
-        if ($sessionOK) {
+        if ($functionHelper->mustBeAuthentificated()) {
             $user = $functionHelper->checkActiveUserInSession();
             if ($role === 'admin') {
                 if (
@@ -212,10 +208,9 @@ class ArticleController
         $request = new  Request();
         $pathUploadDir = '../public/images/articles/';
         $uniq = uniqid();
-        $sessionOK = $functionHelper->mustBeAuthentificated();
 
         try {
-            if ($sessionOK) {
+            if ($functionHelper->mustBeAuthentificated()) {
                 $newDirPath = "$pathUploadDir$uniq";
 
                 $articleCreation = [
@@ -294,10 +289,9 @@ class ArticleController
         $idArticle = $idArticle['id_article'];
         $imagePath = $imageArray['image'];
         $pathUploadDir = "../public/images/";
-        $sessionOK = $functionHelper->mustBeAuthentificated();
 
         try {
-            if ($sessionOK) {
+            if ($functionHelper->mustBeAuthentificated()) {
                 if ($functionHelper->checkActiveUserInSession() === $articleManager->selectAuthorBySlug($slug) ||
                     $functionHelper->checkAdminSession()) {
                     $articleUpdate = [

@@ -109,9 +109,8 @@ class UserController
         $email = $user['email'];
         $pathUploadDir = '../public/images/';
 
-        $sessionOK = $functionHelper->mustBeAuthentificated();
         try {
-            if ($sessionOK) {
+            if ($functionHelper->mustBeAuthentificated()) {
                 $admin = $functionHelper->checkAdminSession();
                 if ($admin === true) {
 
