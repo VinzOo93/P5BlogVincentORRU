@@ -99,7 +99,6 @@ class CommentManager extends QueryManager
          $where,
          $order
      );
-
     }
 
 }

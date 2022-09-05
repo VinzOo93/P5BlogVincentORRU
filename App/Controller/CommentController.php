@@ -51,7 +51,6 @@ class CommentController
         $commentManager = new CommentManager();
         $functionHelper = new FunctionHelper();
         $request = new Request();
-var_dump($data);
         $idComment = $data['comment'];
         $isVisible = $data['visible'];
         $sessionOK = $functionHelper->mustBeAuthentificated();
@@ -88,18 +87,23 @@ var_dump($data);
         $functionHelper = new FunctionHelper();
         $id = $data['id'];
         $slug = $data['slug'];
+        $author = $data['author'];
 
         $sessionOK = $functionHelper->mustBeAuthentificated();
         try {
             if ($sessionOK) {
                 $admin = $functionHelper->checkAdminSession();
                 if ($admin === false) {
+                    if ($functionHelper->checkActiveUserInSession() === $author) {
                     $commentManager->dropComment($id);
                     $request->redirectToRoute('article',
                         [
                             'success' => "Votre commentaire a été supprimé !" ,
                             'slug' => $slug
                         ]);
+                    } else {
+                        $request->redirectToRoute('blogIndex', ['error' => "Vous n'avez pas le doit administrateur"]);
+                    }
                 } else {
                     $commentManager->dropComment($id);
                     $request->redirectToRoute('manageArticles',

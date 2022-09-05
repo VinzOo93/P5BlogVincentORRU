@@ -12,6 +12,7 @@
             <div class="media-right">
                 <form action="/deleteComment" method="post" enctype="multipart/form-data">
                     <input name="slug" type="hidden" value="{{ article.slug }}">
+                    <input name="author" type="hidden" value="{{ comment.author }}">
                     <input name="id" type="hidden" value="{{ comment.id_comment }}">
                     <button type="submit" class="delete"></button>
                 </form>

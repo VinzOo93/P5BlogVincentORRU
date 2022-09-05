@@ -264,18 +264,19 @@ class ArticleController
         $request = new Request();
         $functionHelper = new FunctionHelper();
         $pathUploadDir = '../public/images/';
-        $sessionOK = $functionHelper->mustBeAuthentificated();
-
         try {
-            if ($sessionOK) {
-                $imageArray = $articleManager->selectImagePath($slug);
-
-                if ($imageArray) {
-                    $functionHelper->deleteImage($imageArray['image'], $pathUploadDir);
+            if ($functionHelper->mustBeAuthentificated()) {
+                if ($functionHelper->checkActiveUserInSession() === $articleManager->selectAuthorBySlug($slug) ||
+                    $functionHelper->checkAdminSession()) {
+                    $imageArray = $articleManager->selectImagePath($slug);
+                    if ($imageArray) {
+                        $functionHelper->deleteImage($imageArray['image'], $pathUploadDir);
+                    }
+                    $articleManager->deleteArticle($slug);
+                    $request->redirectToRoute('blogIndex', ['success' => "L'article a bien été supprimé"]);
+                } else {
+                    $request->redirectToRoute('blogIndex', ['error' => "Vous n'avez pas les droits"]);
                 }
-
-                $articleManager->deleteArticle($slug);
-                $request->redirectToRoute('blogIndex', ['success' => "L'article a bien été supprimé"]);
             }
         } catch (Exception $e) {
             $request->redirectToRoute('blogIndex', ['error' => "Erreur lors de la suppression de l'article $e"]);
@@ -297,37 +298,42 @@ class ArticleController
 
         try {
             if ($sessionOK) {
-                $articleUpdate = [
-                    'title' => $data['title'],
-                    'tags' => trim($data['tags']),
-                    'content' => $data['content']
-                ];
-                if ($_FILES['image']['size'] != 0) {
-                    $fileImage = "$pathUploadDir$imagePath";
-                    if (file_exists($fileImage)) {
-                        $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
-                        $folderPath = "$pathUploadDir$folder";
-                        unlink($fileImage);
-                        $slugImageToSlug = $functionHelper->uploadImage($folderPath);
-                        $slugImageToSlug = implode($slugImageToSlug);
-                        $articleUpdate = array_merge($articleUpdate, ['image' => $slugImageToSlug]);
+                if ($functionHelper->checkActiveUserInSession() === $articleManager->selectAuthorBySlug($slug) ||
+                    $functionHelper->checkAdminSession()) {
+                    $articleUpdate = [
+                        'title' => $data['title'],
+                        'tags' => trim($data['tags']),
+                        'content' => $data['content']
+                    ];
+                    if ($_FILES['image']['size'] != 0) {
+                        $fileImage = "$pathUploadDir$imagePath";
+                        if (file_exists($fileImage)) {
+                            $folder = substr($imagePath, 0, strpos($imagePath, '/', 10));
+                            $folderPath = "$pathUploadDir$folder";
+                            unlink($fileImage);
+                            $slugImageToSlug = $functionHelper->uploadImage($folderPath);
+                            $slugImageToSlug = implode($slugImageToSlug);
+                            $articleUpdate = array_merge($articleUpdate, ['image' => $slugImageToSlug]);
+                        }
+                    } else {
+                        $articleUpdate = array_merge($articleUpdate, ['image' => $imagePath]);
+                    }
+                    if ($articleValidator->validate($articleUpdate, $slug)) {
+                        $slug = strtolower(preg_replace('/\s+/', '-', $articleUpdate['title']));
+                        $slugReady = $functionHelper->removeSpecialAndAccent($slug);
+                        $articleManager->updateArticle(
+                            $idArticle,
+                            $articleUpdate['title'],
+                            $slugReady,
+                            $articleUpdate['tags'],
+                            $articleUpdate['image'],
+                            $articleUpdate['content']
+                        );
+                        $title = $articleUpdate['title'];
+                        $request->redirectToRoute('blogIndex', ['success' => "L'article '$title' a bien été mis à jour"]);
                     }
                 } else {
-                    $articleUpdate = array_merge($articleUpdate, ['image' => $imagePath]);
-                }
-                if ($articleValidator->validate($articleUpdate, $slug)) {
-                    $slug = strtolower(preg_replace('/\s+/', '-', $articleUpdate['title']));
-                    $slugReady = $functionHelper->removeSpecialAndAccent($slug);
-                    $articleManager->updateArticle(
-                        $idArticle,
-                        $articleUpdate['title'],
-                        $slugReady,
-                        $articleUpdate['tags'],
-                        $articleUpdate['image'],
-                        $articleUpdate['content']
-                    );
-                    $title = $articleUpdate['title'];
-                    $request->redirectToRoute('blogIndex', ['success' => "L'article '$title' a bien été mis à jour"]);
+                    $request->redirectToRoute('blogIndex', ['error' => "Vous n'avez pas les droits"]);
                 }
             }
         } catch

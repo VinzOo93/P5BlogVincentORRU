@@ -167,7 +167,6 @@ abstract class QueryManager
             try {
                 if (!empty($id)) {
                     $sql = "UPDATE $table SET $strSqlSet WHERE $columnWhere = $id;";
-                    var_dump($sql);
                     $queryStatement = $this->db->connectToDB()->prepare($sql);
                     $queryStatement->execute();
                 }

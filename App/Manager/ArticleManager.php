@@ -33,22 +33,23 @@ class ArticleManager extends QueryManager
         return $this->countAll($this->article);
     }
 
-    public function selectIdArticleBySlug($slug){
-
+    public function selectIdArticleBySlug($slug)
+    {
         return $this->fetchOneNoLeftJoin($this->article, $this->idArticle, [$this->slug => $slug]);
-
     }
 
+    public function selectAuthorBySlug($slug)
+    {
+        return $this->fetchOneNoLeftJoin($this->article, $this->author, [$this->slug => $slug]);
+    }
 
     public function selectOneArticleByTitle($title)
     {
-
         return $this->fetchOneNoLeftJoin($this->article,"$this->idArticle,$this->title", [$this->title => $title]);
-
     }
 
-    public function selectArticleByUser($user, $limit = 3, $offset = 0){
-
+    public function selectArticleByUser($user, $limit = 3, $offset = 0)
+    {
         $leftJoins = [$this->idUser => $this->user];
         $columns = [$this->author => $this->idUser];
         $where = [$this->author => $user['id_user']];
@@ -64,13 +65,11 @@ class ArticleManager extends QueryManager
 
     public function selectOneArticle($slug)
     {
-
         $leftJoins = [$this->idUser => $this->user];
         $columns = [$this->author => $this->idUser];
         $where = [$this->slug => $slug];
 
         return $this->fetchOneWithLeftJoin($this->all,$this->article,$leftJoins, $columns, $where);
-
     }
 
     public function selectImagePath($slug)
@@ -94,8 +93,8 @@ class ArticleManager extends QueryManager
          );
     }
 
-    public function updateArticle($idArticle,$title,$slug, $tags, $image, $content){
-
+    public function updateArticle($idArticle,$title,$slug, $tags, $image, $content)
+    {
         $this->update(
             $this->article,
             [
@@ -107,7 +106,6 @@ class ArticleManager extends QueryManager
                 $this->content => $content,
             ]
         );
-
     }
 
     public  function deleteArticle($slug)
