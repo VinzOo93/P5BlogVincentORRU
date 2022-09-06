@@ -1,4 +1,5 @@
 
+![image](https://user-images.githubusercontent.com/60787347/188748155-10646e21-a545-4bc1-a2bd-7bda5491ad06.png)
 
 Se rendre dans le dossier à l'intérieur du repertoire de votre server local :
 
